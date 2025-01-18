@@ -16,8 +16,8 @@ const Login = () => {
 
         <h1 className="text-2xl">Welcome Back to Seller Central!</h1>
         <p className="text-slate-500 text-xs my-1 md:text-sm">
-          "Log in to manage your store, track your sales, and stay connected
-          with your customers worldwide.
+          Log in to manage your store, track your sales, and stay connected with
+          your customers worldwide.
         </p>
         <div>
           <label className="font-bold text-xs">Email</label>
@@ -41,14 +41,16 @@ const Login = () => {
         <Button variant="primary" className="w-full">
           Login as a Seller
         </Button>
-        <p className="text-xs my-4 text-right">
-          don't have an account?
-          <span className="text-blue-600 cursor-default">register</span>
-        </p>
-        <p className="text-xs my-4 text-right">
-          forgot your password?
-          <span className="text-blue-600 cursor-default">reset password</span>
-        </p>
+        <div className="text-[10px] my-4 flex items-center justify-between">
+          <p>
+            don't have an account? {""}
+            <span className="text-blue-600 cursor-default">register</span>
+          </p>
+          <p>
+            forgot your password? {""}
+            <span className="text-blue-600 cursor-default">reset password</span>
+          </p>
+        </div>
       </form>
     </section>
   );
