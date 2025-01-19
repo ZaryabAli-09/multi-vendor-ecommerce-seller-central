@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { AiFillAlipayCircle } from "react-icons/ai";
 import { Input } from "../components/common ui comps/Input";
 import { Button } from "../components/common ui comps/Button";
@@ -6,6 +6,7 @@ import { Button } from "../components/common ui comps/Button";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
 
 // form validation as yup
 
@@ -32,8 +33,30 @@ const Register = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
+  const [serverMsg, setServerMsg] = useState("");
+  const handleRegister = async (data) => {
+    try {
+      const res = await fetch(
+        "https://ecom-backend-5l3d.onrender.com/api/seller/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(data),
+        }
+      );
 
-  const handleRegister = (data) => {
+      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(result.message);
+      }
+      toast.success(result.message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+
     console.log(data);
   };
 
@@ -109,6 +132,7 @@ const Register = () => {
         <Button variant="primary" className="w-full" type="submit">
           Register as a Seller
         </Button>
+        {serverMsg && <p className=" text-xs">{serverMsg}</p>}
         <p className="text-xs my-4 text-right">
           already registered?
           <span className="text-blue-600 cursor-default"> login</span>
