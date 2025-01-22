@@ -7,6 +7,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 
 // form validation as yup
 
@@ -28,12 +29,14 @@ const schema = yup.object({
 });
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
-  const [serverMsg, setServerMsg] = useState("");
+
   const handleRegister = async (data) => {
     try {
       const res = await fetch(
@@ -52,12 +55,14 @@ const Register = () => {
       if (!res.ok) {
         throw new Error(result.message);
       }
-      toast.success(result.message);
+
+      if (res.ok) {
+        toast.success(result.message);
+        navigate("/otp");
+      }
     } catch (error) {
       toast.error(error.message);
     }
-
-    console.log(data);
   };
 
   return (
@@ -132,10 +137,14 @@ const Register = () => {
         <Button variant="primary" className="w-full" type="submit">
           Register as a Seller
         </Button>
-        {serverMsg && <p className=" text-xs">{serverMsg}</p>}
         <p className="text-xs my-4 text-right">
-          already registered?
-          <span className="text-blue-600 cursor-default"> login</span>
+          already registered?{" "}
+          <Link
+            className="text-blue-600 cursor-pointer hover:underline"
+            to={"/login"}
+          >
+            login
+          </Link>
         </p>
       </form>
     </section>
