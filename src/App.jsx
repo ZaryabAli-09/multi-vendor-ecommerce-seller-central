@@ -7,10 +7,12 @@ import Login from "./pages/Login";
 import { Toaster } from "react-hot-toast";
 import Otp from "./pages/Otp";
 import BrandRegistrationSuccessPage from "./pages/BrandRegistartionSuccessMsg";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <>
       <Toaster position="bottom-center" reverseOrder={true} />
       <Routes>
         <Route path="/" element={<Register />} />
@@ -20,8 +22,10 @@ const App = () => {
           path="/brand-registration-success"
           element={<BrandRegistrationSuccessPage />}
         />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 };
 

@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { AiFillAlipayCircle } from "react-icons/ai";
 import { Input } from "../components/common ui comps/Input";
 import { Button } from "../components/common ui comps/Button";
-
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { registerSeller } from "../store/authReducers";
 
 // form validation as yup
 
@@ -30,6 +30,7 @@ const schema = yup.object({
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -38,30 +39,12 @@ const Register = () => {
   } = useForm({ resolver: yupResolver(schema) });
 
   const handleRegister = async (data) => {
-    try {
-      const res = await fetch(
-        "https://ecom-backend-5l3d.onrender.com/api/seller/auth/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(data),
-        }
-      );
+    // Dispatch registerSeller and unwrap the result
+    await dispatch(registerSeller(data)).unwrap();
 
-      const result = await res.json();
-      if (!res.ok) {
-        throw new Error(result.message);
-      }
-
-      if (res.ok) {
-        toast.success(result.message);
-        navigate("/otp");
-      }
-    } catch (error) {
-      toast.error(error.message);
+    // Redirect to OTP page on success
+    if (registerSeller.fulfilled) {
+      navigate("/otp");
     }
   };
 
