@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import React from "react";
 import Register from "./pages/Register";
@@ -9,6 +9,7 @@ import Otp from "./pages/Otp";
 import BrandRegistrationSuccessPage from "./pages/BrandRegistartionSuccessMsg";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import DashboardHome from "./pages/Dashboard/DashboardHome";
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
         />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/dashboard" element={<DashboardHome />} />
       </Routes>
     </>
   );
