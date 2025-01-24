@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai"; // Import a loading spinner icon
 import { AiFillAlipayCircle } from "react-icons/ai";
 import { Input } from "../components/common ui comps/Input";
 import { Button } from "../components/common ui comps/Button";
@@ -6,11 +7,10 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { registerSeller } from "../store/authReducers";
 
 // form validation as yup
-
 const schema = yup.object({
   brandName: yup.string().required("Brand name is required"),
   brandDescription: yup
@@ -29,9 +29,13 @@ const schema = yup.object({
 });
 
 const Register = () => {
+  // getting loading state from store as we dispatch data from here to redux thunk which will call our server
+  const { loading } = useSelector((state) => state.auth);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // react form hook state
   const {
     register,
     handleSubmit,
@@ -49,9 +53,9 @@ const Register = () => {
   };
 
   return (
-    <section className="p-6 flex items-center justify-center">
+    <section className="p-6 flex items-center justify-center bg-primary">
       <form
-        className=" bg-gray-50 p-6 rounded-lg sm:w-[80%] md:w-[50%] lg:w-[40%]"
+        className="bg-secondary shadow-md p-6 rounded-lg sm:w-[80%] md:w-[50%] lg:w-[40%]"
         onSubmit={handleSubmit(handleRegister)}
       >
         <div className="font-bold mb-4 flex items-center gap-1">
@@ -117,8 +121,17 @@ const Register = () => {
           <span className="text-blue-600 cursor-default">Privacy Policy</span> .
         </p>
 
-        <Button variant="primary" className="w-full" type="submit">
-          Register as a Seller
+        <Button
+          variant="primary"
+          className="w-full"
+          type="submit"
+          disabled={loading}
+        >
+          {loading ? (
+            <AiOutlineLoading3Quarters className="text-xl animate-spin mx-auto" />
+          ) : (
+            "Register as a Seller"
+          )}
         </Button>
         <p className="text-xs my-4 text-right">
           already registered?{" "}

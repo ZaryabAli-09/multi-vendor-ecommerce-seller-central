@@ -21,7 +21,6 @@ const ForgotPassword = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -41,36 +40,31 @@ const ForgotPassword = () => {
         }
       );
 
-      if (res.ok) {
-        const response = await res.json();
-        toast.success(response.message || "Password reset email sent!");
-        reset(); // Reset form after success
+      const result = await res.json();
+      if (!res.ok) {
+        setLoading(false);
+        toast.error(result.message);
       } else {
-        const error = await res.json();
-        toast.error(error.message || "Something went wrong. Please try again.");
+        setLoading(false);
+        toast.success(result.message);
       }
     } catch (error) {
-      toast.error("Network error. Please try again later.");
-    } finally {
-      setLoading(false); // Set loading back to false after API call
+      setLoading(false);
+      toast.error(error.message);
     }
   }
 
   return (
-    <div className="flex justify-center items-center mt-12">
+    <section className="bg-primary flex justify-center items-center h-[100vh]">
       <form
-        className="bg-white shadow-lg rounded w-full sm:w-1/2 md:w-1/2 lg:w-1/3 px-8 pt-6 pb-8 mb-4 border"
+        className="bg-secondary shadow-md rounded w-full sm:w-1/2 md:w-1/2 lg:w-1/3 px-8 pt-6 pb-8 mb-4 "
         onSubmit={handleSubmit(handleForgotPassword)}
       >
-        <h2 className="text-2xl mb-4 font-bold">Forgot Password</h2>
+        <h2 className="text-2xl mb-4">Forgot Password</h2>
 
         <div className="mb-4">
-          <label
-            htmlFor="email"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Email
-          </label>
+          <label className="font-bold text-xs">Email</label>
+
           <Input
             id="email"
             type="email"
@@ -78,9 +72,7 @@ const ForgotPassword = () => {
             {...register("email")} // React Hook Form binding
           />
           {errors.email && (
-            <p className="text-red-500 text-xs italic mt-1">
-              {errors.email.message}
-            </p>
+            <p className="text-red-500 text-xs  mt-1">{errors.email.message}</p>
           )}
         </div>
 
@@ -88,7 +80,7 @@ const ForgotPassword = () => {
           <Button
             disabled={loading}
             type="submit"
-            variant="outline"
+            variant="primary"
             className="w-full"
           >
             {loading ? (
@@ -99,7 +91,7 @@ const ForgotPassword = () => {
           </Button>
         </div>
       </form>
-    </div>
+    </section>
   );
 };
 

@@ -8,8 +8,8 @@ export default {
         body: ["Inter", "sans-serif"], // Or "Roboto"
       },
       colors: {
-        primary: "#1E40AF", // Example: Indigo 700
-        secondary: "#10B981", // Example: Emerald 500
+        primary: "#f7fafc", // Example: gray-100
+        secondary: "#ffffff", // Example: white
         tertiary: "#F59E0B", // Example: Amber 400
       },
     },

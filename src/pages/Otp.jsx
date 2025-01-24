@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../components/common ui comps/Button";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const OTPPage = () => {
   const [otp, setOtp] = useState(Array(6).fill(""));
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (value, index) => {
     if (isNaN(value)) return; // Only allow numbers
     const newOtp = [...otp];
@@ -38,8 +42,9 @@ const OTPPage = () => {
       return;
     }
     try {
+      setLoading(true);
       const res = await fetch(
-        "https://ecom-backend-5l3d.onrender.com/api/seller/auth/verify-email",
+        `${import.meta.env.VITE_API_URL}/seller/auth/verify-email`,
         {
           method: "POST",
           headers: {
@@ -51,26 +56,52 @@ const OTPPage = () => {
       );
 
       const result = await res.json();
-      console.log(result);
       if (!res.ok) {
         throw Error(result.message);
+      } else {
+        setLoading(false);
+        toast.success(result.message);
+        navigate("/brand-registration-success", {
+          state: { message: result.message },
+        });
       }
-
-      toast.success(result.message);
-      navigate("/brand-registration-success", {
-        state: { message: result.message },
-      });
     } catch (error) {
+      setLoading(false);
+      toast.error(error.message);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/seller/auth/resend-otp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      const result = await res.json();
+      if (!res.ok) {
+        throw Error(result.message);
+      } else {
+        setLoading(false);
+        toast.success(result.message);
+      }
+    } catch (error) {
+      setLoading(false);
       toast.error(error.message);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-md rounded-lg p-8 w-96">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
-          Enter OTP
-        </h2>
+    <div className="flex items-center justify-center min-h-screen bg-primary">
+      <div className="bg-secondary shadow-md rounded-lg p-8 w-96">
+        <h2 className=" text-2xl font-bold text-center mb-4 ">Enter OTP</h2>
         <p className="text-gray-600 text-center mb-6">
           We've sent a code to your email
         </p>
@@ -90,12 +121,25 @@ const OTPPage = () => {
             ))}
           </div>
 
-          <button
+          <Button
+            disabled={loading}
             type="submit"
-            className="w-full py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors"
+            variant="primary"
+            className="w-full"
           >
-            Verify
-          </button>
+            {loading ? (
+              <AiOutlineLoading3Quarters className="text-xl animate-spin mx-auto" />
+            ) : (
+              "Verify Otp"
+            )}
+          </Button>
+
+          <p
+            onClick={handleResendOtp}
+            className=" cursor-pointer hover:underline text-xs my-4 "
+          >
+            Resend Otp
+          </p>
         </form>
       </div>
     </div>

@@ -49,39 +49,32 @@ function ResetPassword() {
         }
       );
 
-      const responseData = await res.json();
+      const result = await res.json();
 
-      console.log(responseData);
-      if (res.ok) {
-        toast.success(responseData.message || "Password reset successful!");
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+      if (!res.ok) {
+        setLoading(false);
+        toast.error(result.message);
       } else {
-        toast.error(
-          responseData.message || "Password reset failed. Try again."
-        );
+        setLoading(false);
+        toast.success(result.message);
       }
     } catch (error) {
-      console.error("Error resetting password:", error);
-      toast.error("An unexpected error occurred. Please try again.");
-    } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
+      toast.error(error.message);
     }
   }
 
   return (
-    <div className="flex justify-center items-center mt-12">
+    <div className="bg-primary flex justify-center items-center h-[100vh]">
       <form
-        className="bg-white shadow-lg rounded w-full sm:w-1/2 md:w-1/2 lg:w-1/3 px-8 pt-6 pb-8 mb-4 border"
+        className="bg-secondary shadow-md rounded w-full sm:w-1/2 md:w-1/2 lg:w-1/3 px-8 pt-6 pb-8 mb-4 "
         onSubmit={handleSubmit(onSubmit)}
       >
-        <h2 className="text-2xl mb-4 font-bold">Reset Password</h2>
+        <h2 className="text-2xl mb-4 ">Reset Password</h2>
 
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            New Password
-          </label>
+          <label className="font-bold text-xs">Password</label>
+
           <Input
             type="password"
             placeholder="Enter your new password"
@@ -95,11 +88,16 @@ function ResetPassword() {
         </div>
 
         <div className="flex items-center justify-between flex-col space-y-2">
-          <Button disabled={loading} type="submit" variant="outline">
+          <Button
+            disabled={loading}
+            type="submit"
+            variant="primary"
+            className="w-full"
+          >
             {loading ? (
               <AiOutlineLoading3Quarters className="text-xl animate-spin mx-auto" />
             ) : (
-              "Reset"
+              "Reset Your Password"
             )}
           </Button>
         </div>
