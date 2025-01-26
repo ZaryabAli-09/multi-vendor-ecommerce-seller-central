@@ -1,24 +1,48 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import Sidebar from "../../components/Sidebar/SideBar";
+import { useLocation } from "react-router-dom";
+import UploadProduct from "./ProductManagement/UploadProduct";
+import Overview from "./Overview";
+import AllProducts from "./ProductManagement/AllProducts";
+import Orders from "./Orders";
+import Profile from "./Profile";
+import Billing from "./Billing";
 
 const DashboardHome = () => {
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+  const [tab, setTab] = useState("overview");
+  const fullUrl = location.pathname + location.search;
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const tabFromUrl = urlParams.get("tab");
+    if (tabFromUrl) {
+      setTab(tabFromUrl);
+    }
+  }, [location.search]);
 
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar
+        activeTab={fullUrl}
+        isOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+      />
 
       {/* Content Area */}
       <div className="flex flex-col w-full">
         <Navbar />
-        <main className="bg-primary p-6 flex-grow overflow-y-scroll">
-          <h1 className="text-2xl font-bold">Welcome to the Dashboard</h1>
-          <p className="mt-4">Manage your products and account here.</p>
-        </main>
+        {tab === "upload-product" && <UploadProduct />}
+        {tab === "overview" && <Overview />}
+        {tab === "profile" && <Profile />}
+
+        {tab === "products" && <AllProducts />}
+        {tab === "orders" && <Orders />}
+        {tab === "billing" && <Billing />}
       </div>
     </div>
   );

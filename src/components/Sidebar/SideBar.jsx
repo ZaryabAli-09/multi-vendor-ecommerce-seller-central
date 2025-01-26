@@ -16,34 +16,29 @@ import {
 
 const DASHBOARD_SIDEBAR_LINKS = [
   {
-    label: "Dashboard",
-    path: "/",
+    label: "Overview",
+    path: "/dashboard?tab=overview",
     icon: <HiOutlineViewGrid />,
   },
   {
+    label: "Profile",
+    path: "/dashboard?tab=profile",
+    icon: <HiOutlineCube />,
+  },
+  {
+    label: "Upload Product",
+    path: "/dashboard?tab=upload-product",
+    icon: <HiOutlineCube />,
+  },
+  {
     label: "Products",
-    path: "/products",
+    path: "/dashboard?tab=products",
     icon: <HiOutlineCube />,
   },
   {
     label: "Orders",
-    path: "/orders",
+    path: "/dashboard?tab=orders",
     icon: <HiOutlineShoppingCart />,
-  },
-  {
-    label: "Customers",
-    path: "/customers",
-    icon: <HiOutlineUsers />,
-  },
-  {
-    label: "Transactions",
-    path: "/transactions",
-    icon: <HiOutlineDocumentText />,
-  },
-  {
-    label: "Messages",
-    path: "/messages",
-    icon: <HiOutlineAnnotation />,
   },
 ];
 
@@ -54,20 +49,24 @@ export const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
     icon: <HiOutlineCog />,
   },
   {
+    label: "Billing",
+    path: "/dashboard?tab=billing",
+    icon: <HiOutlineCog />,
+  },
+  {
     label: "Help & Support",
     path: "/support",
     icon: <HiOutlineQuestionMarkCircle />,
   },
 ];
 
-const Sidebar = () => {
-  const { pathname } = useLocation();
-
+const Sidebar = ({ activeTab }) => {
+  console.log(activeTab);
   return (
-    <div className="bg-secondary text-light text-primary-base shadow-md w-72 p-2 flex flex-col border h-screen sticky top-0">
+    <div className="bg-secondary text-light text-primary-base shadow-md w-[250px] p-2 flex flex-col border h-screen sticky top-0">
       <div className="flex items-center p-4">
         <FcBullish fontSize={24} />
-        <span className="font-bold">LOGO</span>
+        <span className="font-bold text-sm">LOGO SELLER CENTRAL</span>
       </div>
       <div className="py-8 flex flex-col gap-0.5 overflow-y-auto ">
         {DASHBOARD_SIDEBAR_LINKS.map((link) => (
@@ -75,7 +74,7 @@ const Sidebar = () => {
             key={link.label}
             to={link.path}
             className={`flex  items-center gap-2 px-4 py-2 rounded ${
-              pathname === link.path ? "bg-primary" : "hover:bg-primary"
+              activeTab === link.path ? "bg-gray-300" : "hover:bg-primary"
             }`}
           >
             <span>{link.icon}</span>
@@ -89,7 +88,7 @@ const Sidebar = () => {
             key={link.label}
             to={link.path}
             className={`flex items-center gap-2 px-4 py-2 rounded ${
-              pathname === link.path ? "bg-primary" : " hover:bg-primary"
+              activeTab === link.path ? "bg-gray-300" : " hover:bg-primary"
             }`}
           >
             <span>{link.icon}</span>

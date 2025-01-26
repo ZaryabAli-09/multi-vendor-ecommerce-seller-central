@@ -10,12 +10,14 @@ import BrandRegistrationSuccessPage from "./pages/BrandRegistartionSuccessMsg";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import DashboardHome from "./pages/Dashboard/DashboardHome";
+import UploadProduct from "./pages/Dashboard/ProductManagement/UploadProduct";
 
 const App = () => {
   return (
     <>
       <Toaster position="bottom-center" reverseOrder={true} />
       <Routes>
+        {/* Auth Routes  */}
         <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/otp" element={<Otp />} />
@@ -25,7 +27,10 @@ const App = () => {
         />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+
+        {/* Dashboard Routes  */}
         <Route path="/dashboard" element={<DashboardHome />} />
+        {/* <Route path="/upload-product" element={<UploadProduct />} /> */}
       </Routes>
     </>
   );
