@@ -25,7 +25,7 @@ const schema = yup.object({
   countInStock: yup
     .number()
     .transform((value, originalValue) =>
-      originalValue.trim() === "" ? null : value
+      originalValue.trim() === "" ? 1 : value
     )
     .required("Please enter product stocks")
     .typeError("Stocks must be a number"),
@@ -37,6 +37,8 @@ const schema = yup.object({
 });
 
 const UploadProduct = () => {
+  // TODO: ui revamp , create dropdown for color and sizes ,code documentation , refactoring...
+
   const [allCatgories, setAllCategories] = useState([]);
   const [selectedMainCategory, setSelectedMainCategory] = useState(null);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
@@ -45,8 +47,6 @@ const UploadProduct = () => {
   const [variants, setVariants] = useState([
     { size: "", color: "", stock: "" },
   ]);
-
-  // remove discounted price and stock if it is variable product
 
   const {
     register,
@@ -139,12 +139,26 @@ const UploadProduct = () => {
         formData.append("images", image);
       });
       // Append each variant manually
-      console.log(variants);
       variants.forEach((variant, index) => {
         formData.append(`variants[${index}][size]`, variant.size);
         formData.append(`variants[${index}][color]`, variant.color);
         formData.append(`variants[${index}][stock]`, variant.stock);
       });
+      if (isVariable) {
+        variants.forEach((variants, index) => {
+          if (
+            !variants.size ||
+            variants.size === "" ||
+            !variants.color ||
+            variants.color === "" ||
+            !variants.stock ||
+            variants.stock === ""
+          ) {
+            toast.error("Please enter variants otherwise remove it");
+            return;
+          }
+        });
+      }
 
       console.log("FormData Entries:");
       for (let pair of formData.entries()) {
@@ -275,7 +289,7 @@ const UploadProduct = () => {
         <Input {...register("price")} type="number" />
         {errors.price && (
           <p className="text-xs text-red-600">{errors.price.message}</p>
-        )}
+        )}{" "}
         <label>discounted price</label>
         <Input {...register("discountedPrice")} type="number" />
         {errors.discountedPrice && (
@@ -284,17 +298,20 @@ const UploadProduct = () => {
           </p>
         )}
         <label> stocks</label>
-        <Input {...register("countInStock")} type="number" />
+        <Input
+          disabled={isVariable}
+          className={`${isVariable && "disabled"}`}
+          {...register("countInStock")}
+          type="number"
+        />
         {errors.countInStock && (
           <p className="text-xs text-red-600">{errors.countInStock.message}</p>
         )}
         <label> images</label>
-
         <Input {...register("images")} type="file" multiple />
         {errors.images && (
           <p className="text-xs text-red-600">{errors.images.message}</p>
         )}
-
         <div className="m-4">
           {isVariable && (
             <div>
@@ -343,7 +360,6 @@ const UploadProduct = () => {
             {isVariable ? "Add More Variants +" : "Add Variants (Optional)"}
           </Button>
         </div>
-
         <Button variant="primary" type="submit">
           Submit
         </Button>
