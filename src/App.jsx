@@ -11,6 +11,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import DashboardHome from "./pages/Dashboard/DashboardHome";
 import UploadProduct from "./pages/Dashboard/ProductManagement/UploadProduct";
+import Product from "./pages/Dashboard/ProductManagement/Product";
 
 const App = () => {
   return (
@@ -30,6 +31,8 @@ const App = () => {
 
         {/* Dashboard Routes  */}
         <Route path="/dashboard" element={<DashboardHome />} />
+        <Route path="/dashboard/product/:productId" element={<Product />} />
+
         {/* <Route path="/upload-product" element={<UploadProduct />} /> */}
       </Routes>
     </>
