@@ -5,10 +5,7 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
-    <nav className="bg-white shadow-md px-4 py-2 flex justify-between items-center">
-      <div className="h-8">
-        <AiOutlineLogout />
-      </div>
+    <nav className="bg-white border-b px-4 py-2 flex justify-end items-center">
       <div className="relative">
         <div
           className="h-10 w-10 rounded-full cursor-pointer"

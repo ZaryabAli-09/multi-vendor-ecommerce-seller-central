@@ -34,15 +34,17 @@ const DashboardHome = () => {
       />
 
       {/* Content Area */}
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full md:ml-[256px]   overflow-auto">
         <Navbar />
-        {tab === "upload-product" && <UploadProduct />}
-        {tab === "overview" && <Overview />}
-        {tab === "profile" && <Profile />}
+        <div className="p-4">
+          {tab === "upload-product" && <UploadProduct />}
+          {tab === "overview" && <Overview />}
+          {tab === "profile" && <Profile />}
 
-        {tab === "products" && <AllProducts />}
-        {tab === "orders" && <Orders />}
-        {tab === "billing" && <Billing />}
+          {tab === "products" && <AllProducts />}
+          {tab === "orders" && <Orders />}
+          {tab === "billing" && <Billing />}
+        </div>
       </div>
     </div>
   );
