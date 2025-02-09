@@ -46,7 +46,11 @@ const DASHBOARD_SIDEBAR_LINKS = [
 ];
 
 const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
-  { label: "Settings", path: "/settings", icon: <HiOutlineCog /> },
+  {
+    label: "Settings",
+    path: "/dashboard?tab=settings",
+    icon: <HiOutlineCog />,
+  },
 
   { label: "Billing", path: "/dashboard?tab=billing", icon: <HiOutlineCog /> },
 
