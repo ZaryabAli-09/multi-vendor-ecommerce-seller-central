@@ -85,7 +85,6 @@ const ProductEditModal = ({
         throw new Error(result.message);
       } else {
         setAllCategories(result.data);
-        toast.success(result.message);
       }
     } catch (error) {
       toast.error(error.message);
@@ -105,8 +104,7 @@ const ProductEditModal = ({
       );
       const result = await res.json();
       if (!res.ok) {
-        toast.error(result.message);
-        return;
+        return new Error(result.message);
       } else {
         setEditModaldata({
           name: result?.data?.name,
@@ -145,6 +143,10 @@ const ProductEditModal = ({
         !selectedSubSubCategory
       ) {
         toast.error("Product categories are required");
+        return;
+      }
+      if (variants.length < 1) {
+        toast.error("At least 1 variant is required for a product.");
         return;
       }
       variants.forEach((variants, index) => {
@@ -207,6 +209,34 @@ const ProductEditModal = ({
     }
   };
 
+  // Function to extract public_id from the Cloudinary URL
+  const extractPublicIdFromUrl = (url) => {
+    const match = url.match(/\/v\d+\/([^/]+)(?=\.[a-zA-Z]{3,4}$)/); // Match /v{version}/{public_id}.jpg
+    return match ? match[1] : null; // Return the public_id without the extension
+  };
+
+  const deleteImageFromCloudinary = async (public_id) => {
+    console.log(public_id);
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/product/deleteImg/${public_id}`,
+        {
+          method: "DELETE",
+
+          credentials: "include",
+        }
+      );
+      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(result.message);
+      }
+      toast.success(result.message);
+      return result;
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   const handleAddVariant = () => {
     setVariants([...variants, { size: "", color: "", stock: 0, price: 0 }]);
   };
@@ -217,17 +247,25 @@ const ProductEditModal = ({
     setVariants(updatedVariants);
   };
 
-  const handleRemoveVariant = (index) => {
+  const handleRemoveVariant = async (index) => {
+    const variantToRemove = variants[index];
+
+    // Delete images from Cloudinary
+    if (variantToRemove.images && variantToRemove.images.length > 0) {
+      for (const image of variantToRemove.images) {
+        if (image) {
+          // Extract the public ID from the URL
+          const publicId = extractPublicIdFromUrl(image);
+          // Send it to the delete function
+          await deleteImageFromCloudinary(publicId);
+        }
+      }
+    }
+
     const updatedVariants = variants.filter((_, i) => i !== index);
     setVariants(updatedVariants);
   };
 
-  const handleColorChange = (color) => {
-    setVariants((prev) => ({
-      ...prev,
-      color: color,
-    }));
-  };
   return (
     <Dialog
       open={editPopUp}
@@ -328,6 +366,17 @@ const ProductEditModal = ({
               key={index}
               className="p-4 border rounded-lg flex flex-col gap-4 shadow-sm"
             >
+              <div className="flex space-x-1">
+                {variant?.images.map((img) => {
+                  return (
+                    <img
+                      className="w-12 h-auto object-cover"
+                      src={img}
+                      alt="product variant image"
+                    />
+                  );
+                })}
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 {/* Size Dropdown */}
                 <FormControl fullWidth>

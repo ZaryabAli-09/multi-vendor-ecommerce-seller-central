@@ -215,6 +215,7 @@ const CreateProduct = () => {
         <form onSubmit={handleSubmit}>
           {/* Product Name */}
           <p className="my-2 font-bold">Basic Information</p>
+          <div className="flex items-center justify-end"></div>
           <div className="mb-4">
             <TextField
               label="Product Name"
@@ -227,70 +228,93 @@ const CreateProduct = () => {
             />
           </div>
           {/* Category Selection */}
-          <div className="mb-4">
-            <FormControl fullWidth>
-              <InputLabel>Main Category</InputLabel>
-              <Select
-                value={selectedMainCategory?._id || ""}
-                onChange={(e) => handleCategoryChange(e, "main")}
-                label="Main Category"
-                required
-              >
-                <MenuItem value="">Select Main Category</MenuItem>
-                {allCatgories.map((category) => (
-                  <MenuItem key={category._id} value={category._id}>
-                    {category.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+
+          <div className="flex flex-col-reverse md:flex-row md:justify-between ">
+            <div className="md:w-[50%]">
+              <div className="mb-4 ">
+                <FormControl fullWidth>
+                  <InputLabel>Main Category</InputLabel>
+                  <Select
+                    value={selectedMainCategory?._id || ""}
+                    onChange={(e) => handleCategoryChange(e, "main")}
+                    label="Main Category"
+                    required
+                  >
+                    <MenuItem value="">Select Main Category</MenuItem>
+                    {allCatgories.map((category) => (
+                      <MenuItem key={category._id} value={category._id}>
+                        {category.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
+              {/* Subcategory Selection */}
+              {selectedMainCategory &&
+                selectedMainCategory.subCategories.length > 0 && (
+                  <div className="mb-4">
+                    <FormControl fullWidth>
+                      <InputLabel>Subcategory</InputLabel>
+                      <Select
+                        value={selectedSubCategory?._id || ""}
+                        onChange={(e) => handleCategoryChange(e, "sub")}
+                        label="Subcategory"
+                        required
+                      >
+                        <MenuItem value="">Select Subcategory</MenuItem>
+                        {selectedMainCategory.subCategories.map((subCat) => (
+                          <MenuItem key={subCat._id} value={subCat._id}>
+                            {subCat.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                )}
+              {/* Sub-Subcategory Selection */}
+              {selectedSubCategory &&
+                selectedSubCategory.subCategories.length > 0 && (
+                  <div className="mb-4">
+                    <FormControl fullWidth>
+                      <InputLabel>Sub-Subcategory</InputLabel>
+                      <Select
+                        value={selectedSubSubCategory?._id || ""}
+                        onChange={(e) => handleCategoryChange(e, "subSub")}
+                        label="Sub-Subcategory"
+                        required
+                      >
+                        <MenuItem value="">Select Sub-Subcategory</MenuItem>
+                        {selectedSubCategory.subCategories.map((subSubCat) => (
+                          <MenuItem key={subSubCat._id} value={subSubCat._id}>
+                            {subSubCat.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                )}{" "}
+            </div>
+            <div className="p-4 shadow-md rounded-lg border h-32 my-2 mb-4 md:w-[40%]  bg-purple-500 text-secondary  ">
+              <h3 className="font-bold">* {""}Tips</h3>
+              <p className="text-xs">
+                Please make sure to upload product images(s), fill product name,
+                and select the correct category to publish a product.
+              </p>
+            </div>
           </div>
-          {/* Subcategory Selection */}
-          {selectedMainCategory &&
-            selectedMainCategory.subCategories.length > 0 && (
-              <div className="mb-4">
-                <FormControl fullWidth>
-                  <InputLabel>Subcategory</InputLabel>
-                  <Select
-                    value={selectedSubCategory?._id || ""}
-                    onChange={(e) => handleCategoryChange(e, "sub")}
-                    label="Subcategory"
-                    required
-                  >
-                    <MenuItem value="">Select Subcategory</MenuItem>
-                    {selectedMainCategory.subCategories.map((subCat) => (
-                      <MenuItem key={subCat._id} value={subCat._id}>
-                        {subCat.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </div>
-            )}
-          {/* Sub-Subcategory Selection */}
-          {selectedSubCategory &&
-            selectedSubCategory.subCategories.length > 0 && (
-              <div className="mb-4">
-                <FormControl fullWidth>
-                  <InputLabel>Sub-Subcategory</InputLabel>
-                  <Select
-                    value={selectedSubSubCategory?._id || ""}
-                    onChange={(e) => handleCategoryChange(e, "subSub")}
-                    label="Sub-Subcategory"
-                    required
-                  >
-                    <MenuItem value="">Select Sub-Subcategory</MenuItem>
-                    {selectedSubCategory.subCategories.map((subSubCat) => (
-                      <MenuItem key={subSubCat._id} value={subSubCat._id}>
-                        {subSubCat.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </div>
-            )}{" "}
           {/* Product Description */}
           <div className="mb-4">
+            <div className="p-4 shadow-md rounded-lg border my-2 mb-4   bg-purple-500 text-secondary  ">
+              <h3 className="font-bold">* {""}Tips</h3>
+              <p className=" text-[9px] md:text-xs">
+                When uploading accessories like jewelry and watches, provide a
+                detailed description including material (gold-plated, stainless
+                steel, leather, etc.), dimensions (chain length, dial size,
+                strap width), weight, and any special features like water
+                resistance, adjustable sizing, or gemstone details in
+                description.
+              </p>
+            </div>
             <TextField
               label="Description"
               variant="outlined"
@@ -302,6 +326,21 @@ const CreateProduct = () => {
               multiline
               rows={4}
             />
+          </div>
+          <div className="p-4 shadow-md rounded-lg border  my-2 mb-4   bg-purple-500 text-secondary ">
+            <h3 className="font-bold">* {""}Tips</h3>
+            <p className="text-[9px] md:text-xs">
+              For variant-based products like shoes and clothing, ensure that
+              each product has at least one variant with details like size,
+              color, price, and stock availability. If a product comes in the
+              same color but different sizes, upload images only in one variant
+              to avoid duplication. However, if you have different images for
+              each size, you can upload them separately for better clarity.
+              Always mention fabric type, fit, stretchability, and washing
+              instructions in the description. Providing a size chart and clear
+              images from multiple angles will help customers make informed
+              decisions.
+            </p>
           </div>
           {/* Variants Section */}
           {formData.variants.map((variant, index) => (
