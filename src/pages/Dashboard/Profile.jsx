@@ -15,7 +15,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   FaInstagram,
   FaFacebookF,
@@ -71,6 +71,46 @@ const Profile = () => {
   const [brandInfo, setBrandInfo] = useState({});
   const [loading, setLoading] = useState(false); // For save button loader
   const [isFetching, setIsFetching] = useState(true); // For initial data fetch skeleton
+
+  const [imgLoading, setImgLoading] = useState({ cover: false, logo: false });
+
+  const handleImageUpload = async (e, type) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    if (brandInfo[type]?.public_id) {
+      formData.append("oldPublicId", brandInfo[type].public_id);
+    }
+
+    try {
+      setImgLoading((prev) => ({ ...prev, [type]: true }));
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/seller/upload-${type}`,
+        {
+          method: "PATCH",
+          body: formData,
+          credentials: "include", // Using cookies for authentication
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to upload image");
+      }
+
+      toast.success(data.message);
+      fetchBrandInfo();
+    } catch (error) {
+      console.error(`Error uploading ${type}:`, error);
+    } finally {
+      setImgLoading((prev) => ({ ...prev, [type]: false }));
+    }
+  };
 
   const {
     register,
@@ -157,6 +197,7 @@ const Profile = () => {
       setIsFetching(false); // Hide skeleton after data is fetched
     }
   };
+  console.log(brandInfo);
 
   useEffect(() => {
     fetchBrandInfo();
@@ -190,24 +231,49 @@ const Profile = () => {
         </div>
       ) : (
         <>
-          <div className="p-0 relative">
+          <div className="relative">
             {/* Cover Image */}
             <div
-              className="w-full h-48 bg-cover bg-center rounded-md"
+              className="w-full h-48 bg-cover bg-center rounded-md cursor-pointer"
               style={{
-                backgroundImage: `url(https://png.pngtree.com/thumb_back/fh260/background/20190830/pngtree-hot-dog-seller-background-in-the-car-vector-image_309234.jpg)`,
+                backgroundImage: `url(${
+                  brandInfo?.coverImage?.url ||
+                  "https://placehold.co/600x400/png"
+                })`,
               }}
             >
-              {/* Logo on Cover */}
-              <Avatar
-                src="https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg"
-                alt="Logo"
-                style={{
-                  width: "10rem", // 96px
-                  height: "10rem", // 96px
-                }}
-                className="rounded-full absolute -bottom-20 border border-black left-1/2 transform -translate-x-1/2"
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                id="coverInput"
+                onChange={(e) => handleImageUpload(e, "coverImage")}
               />
+              <label htmlFor="coverInput" className="w-full h-full block" />
+              {imgLoading.logo && (
+                <CircularProgress className="absolute inset-0 m-auto" />
+              )}
+            </div>
+
+            {/* Logo */}
+            <div className="relative -bottom-20 left-1/2 transform -translate-x-1/2 w-40 h-40">
+              {" "}
+              <input
+                type="file"
+                accept="image/*"
+                id="logoInput"
+                onChange={(e) => handleImageUpload(e, "logo")}
+              />
+              <Avatar
+                style={{ width: "100px", height: "100px" }}
+                src={brandInfo?.logo?.url || "https://placehold.co/600x400/png"}
+                className="w-full rounded-full h-full border-4 border-white cursor-pointer"
+              >
+                <label htmlFor="logoInput" className="w-full h-full block" />
+                {imgLoading.logo && (
+                  <CircularProgress className="absolute inset-0 m-auto" />
+                )}
+              </Avatar>
             </div>
           </div>
 

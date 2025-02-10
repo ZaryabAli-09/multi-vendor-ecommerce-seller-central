@@ -99,7 +99,9 @@ const authSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    updateSeller: (state, action) => {},
+  },
   extraReducers: (builder) => {
     builder
       // user registration

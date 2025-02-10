@@ -107,7 +107,6 @@ const CreateProduct = () => {
     const updatedVariants = formData.variants.filter((_, i) => i !== index);
     setFormData({ ...formData, variants: updatedVariants });
   };
-
   // Handler for variant input changes
   const handleVariantChange = (index, e) => {
     const { name, value } = e.target;
@@ -142,24 +141,52 @@ const CreateProduct = () => {
       selectedSubCategory?._id,
       selectedSubSubCategory?._id,
     ];
-
     if (formData?.variants.length === 0) {
       toast.error("At least Provide 1 variant for product information");
       return;
     }
-    for (const variant of formData?.variants || []) {
+    let hasImages = false;
+    const colorMap = new Map(); // Stores whether a color has images assigned
+
+    for (let i = 0; i < (formData?.variants || []).length; i++) {
+      const variant = formData.variants[i];
+
       if (!variant.price) {
         toast.error("Please enter price for your product");
         return;
-      } else if (!variant.stock || variant.stock <= 0) {
+      }
+
+      if (!variant.stock || variant.stock <= 0) {
         toast.error("Please enter stock for your product");
         return;
-      } else if (!variant.images || variant.images.length === 0) {
-        toast.error(
-          "Please select at least 1 image per variant for your product"
-        );
-        return;
       }
+
+      // If the variant has a color
+      if (variant.color) {
+        if (!colorMap.has(variant.color)) {
+          // First time encountering this color
+          if (!variant.images || variant.images.length === 0) {
+            toast.error(
+              `Please select at least 1 image for the color variant: ${variant.color}`
+            );
+            return;
+          }
+          colorMap.set(variant.color, true); // Mark this color as having images
+        } else {
+          // If this color was encountered before, images can be skipped
+        }
+      }
+
+      // Check if any variant has images
+      if (variant.images && variant.images.length > 0) {
+        hasImages = true;
+      }
+    }
+
+    // If no variants have images at all, throw an error
+    if (!hasImages) {
+      toast.error("At least one variant must have images for the product");
+      return;
     }
 
     const payload = new FormData();
@@ -359,7 +386,6 @@ const CreateProduct = () => {
                     name="size"
                     value={variant.size}
                     onChange={(e) => handleVariantChange(index, e)}
-                    required
                   >
                     {availableSizes.map((size) => (
                       <MenuItem key={size} value={size}>
@@ -377,7 +403,6 @@ const CreateProduct = () => {
                     name="color"
                     value={variant.color}
                     onChange={(e) => handleVariantChange(index, e)}
-                    required
                     renderValue={(selected) => (
                       <div className="flex items-center">
                         <div
