@@ -1,21 +1,22 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiOutlineLoading3Quarters } from "react-icons/ai"; // Import a loading spinner icon
-import { Input } from "../components/common ui comps/Input";
-import { Button } from "../components/common ui comps/Button";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Input } from "../../components/common ui comps/Input";
+import { Button } from "../../components/common ui comps/Button";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const schema = yup.object({
-  password: yup
+  email: yup
     .string()
-    .min(6, "Password must be at least 6 characters long")
-    .required("Password is required"),
+    .email("Please enter a valid email address")
+    .required("Email is required"),
 });
 
-function ResetPassword() {
+const ForgotPassword = () => {
+  const [loading, setLoading] = useState(false); // Local loading state
+
   const {
     register,
     handleSubmit,
@@ -24,33 +25,22 @@ function ResetPassword() {
     resolver: yupResolver(schema),
   });
 
-  const [loading, setLoading] = useState(false);
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const resetPasswordToken = params.get("resetPasswordToken");
-  const navigate = useNavigate();
-
-  async function onSubmit(data) {
-    setLoading(true); // Start loading
+  async function handleForgotPassword(data) {
+    setLoading(true); // Set loading to true before making the API call
     try {
       const res = await fetch(
-        `${
-          import.meta.env.VITE_API_URL
-        }/seller/auth/reset-password/${resetPasswordToken}`,
+        `${import.meta.env.VITE_API_URL}/seller/auth/forgot-password`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify({
-            newPassword: data.password,
-          }),
+          body: JSON.stringify(data),
         }
       );
 
       const result = await res.json();
-
       if (!res.ok) {
         setLoading(false);
         toast.error(result.message);
@@ -65,25 +55,24 @@ function ResetPassword() {
   }
 
   return (
-    <div className="bg-primary flex justify-center items-center h-[100vh]">
+    <section className="bg-primary flex justify-center items-center h-[100vh]">
       <form
         className="bg-secondary shadow-md rounded w-full sm:w-1/2 md:w-1/2 lg:w-1/3 px-8 pt-6 pb-8 mb-4 "
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(handleForgotPassword)}
       >
-        <h2 className="text-2xl mb-4 ">Reset Password</h2>
+        <h2 className="text-2xl mb-4">Forgot Password</h2>
 
         <div className="mb-4">
-          <label className="font-bold text-xs">Password</label>
+          <label className="font-bold text-xs">Email</label>
 
           <Input
-            type="password"
-            placeholder="Enter your new password"
-            {...register("password")}
+            id="email"
+            type="email"
+            placeholder="Enter your email"
+            {...register("email")} // React Hook Form binding
           />
-          {errors.password && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.password.message}
-            </p>
+          {errors.email && (
+            <p className="text-red-500 text-xs  mt-1">{errors.email.message}</p>
           )}
         </div>
 
@@ -97,13 +86,13 @@ function ResetPassword() {
             {loading ? (
               <AiOutlineLoading3Quarters className="text-xl animate-spin mx-auto" />
             ) : (
-              "Reset Your Password"
+              "Send Email"
             )}
           </Button>
         </div>
       </form>
-    </div>
+    </section>
   );
-}
+};
 
-export default ResetPassword;
+export default ForgotPassword;

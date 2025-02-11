@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/common ui comps/Button";
+import { Button } from "../../components/common ui comps/Button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const OTPPage = () => {

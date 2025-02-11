@@ -1,13 +1,13 @@
 import React from "react";
 import { AiFillAlipayCircle, AiOutlineLoading3Quarters } from "react-icons/ai";
-import { Input } from "../components/common ui comps/Input";
-import { Button } from "../components/common ui comps/Button";
+import { Input } from "../../components/common ui comps/Input";
+import { Button } from "../../components/common ui comps/Button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../store/authReducers";
+import { login } from "../../store/authReducers";
 
 // form validation as yup
 
@@ -28,7 +28,7 @@ const Login = () => {
 
   console.log(user);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -40,9 +40,7 @@ const Login = () => {
   const handleLogin = async (data) => {
     await dispatch(login(data)).unwrap();
 
-    if (login.fulfilled) {
-      console.log("fullfilled");
-    }
+    navigate("/dashboard");
   };
 
   return (

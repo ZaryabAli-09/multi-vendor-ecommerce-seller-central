@@ -8,13 +8,16 @@ import {
   IconButton,
   Avatar,
 } from "@mui/material";
-import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../store/authReducers";
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.auth);
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -25,30 +28,8 @@ const Navbar = () => {
   };
 
   const handleLogout = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/seller/auth/logout`,
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      );
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.message);
-      }
-
-      toast.success(result.message);
-      navigate("/login"); // Redirect to login page after logout
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
-      handleMenuClose();
-    }
+    dispatch(logout());
+    navigate("/login");
   };
 
   return (

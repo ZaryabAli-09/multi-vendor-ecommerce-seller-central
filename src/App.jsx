@@ -1,17 +1,17 @@
 import { Routes, Route } from "react-router-dom";
 
 import React from "react";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
+import Register from "./pages/Auth/Register";
+import Login from "./pages/Auth/Login";
 
 import { Toaster } from "react-hot-toast";
-import Otp from "./pages/Otp";
-import BrandRegistrationSuccessPage from "./pages/BrandRegistartionSuccessMsg";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
+import Otp from "./pages/Auth/Otp";
+import BrandRegistrationSuccessPage from "./pages/Auth/BrandRegistartionSuccessMsg";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
 import DashboardHome from "./pages/Dashboard/DashboardHome";
-import UploadProduct from "./pages/Dashboard/ProductManagement/UploadProduct";
 import Product from "./pages/Dashboard/ProductManagement/Product";
+import AuthenticatedRoutes from "./components/RoutesWrappers/AuthenticatedRoutes";
 
 const App = () => {
   return (
@@ -30,10 +30,10 @@ const App = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Dashboard Routes  */}
-        <Route path="/dashboard" element={<DashboardHome />} />
-        <Route path="/dashboard/product/:productId" element={<Product />} />
-
-        {/* <Route path="/upload-product" element={<UploadProduct />} /> */}
+        <Route element={<AuthenticatedRoutes />}>
+          <Route path="/dashboard" element={<DashboardHome />} />
+          <Route path="/dashboard/product/:productId" element={<Product />} />
+        </Route>
       </Routes>
     </>
   );

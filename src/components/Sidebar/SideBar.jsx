@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Drawer,
   IconButton,
@@ -9,6 +9,7 @@ import {
   ListItemIcon,
   ListItemText,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import {
   HiOutlineMenu,
@@ -20,6 +21,8 @@ import {
   HiOutlineViewGrid,
 } from "react-icons/hi";
 import { FcBullish } from "react-icons/fc";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../store/authReducers";
 
 const DASHBOARD_SIDEBAR_LINKS = [
   {
@@ -63,6 +66,14 @@ const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
 
 const Sidebar = ({ activeTab }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { loading } = useSelector((state) => state.auth);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const handleLogout = async () => {
+    dispatch(logout());
+    navigate("/login");
+  };
 
   const toggleDrawer = () => {
     setMobileOpen(!mobileOpen);
@@ -110,7 +121,11 @@ const Sidebar = ({ activeTab }) => {
             <ListItemIcon>
               <HiOutlineLogout />
             </ListItemIcon>
-            <ListItemText primary="Logout" />
+            {loading ? (
+              <CircularProgress size={24} />
+            ) : (
+              <ListItemText onClick={handleLogout} primary="Logout" />
+            )}
           </ListItemButton>
         </ListItem>
       </List>

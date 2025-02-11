@@ -1,14 +1,14 @@
 import React from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai"; // Import a loading spinner icon
 import { AiFillAlipayCircle } from "react-icons/ai";
-import { Input } from "../components/common ui comps/Input";
-import { Button } from "../components/common ui comps/Button";
+import { Input } from "../../components/common ui comps/Input";
+import { Button } from "../../components/common ui comps/Button";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { registerSeller } from "../store/authReducers";
+import { registerSeller } from "../../store/authReducers";
 
 // form validation as yup
 const schema = yup.object({
