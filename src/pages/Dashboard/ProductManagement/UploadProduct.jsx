@@ -98,7 +98,14 @@ const CreateProduct = () => {
       ...formData,
       variants: [
         ...formData.variants,
-        { size: "", color: "", price: "", stock: "", images: [] },
+        {
+          size: "",
+          color: "",
+          price: "",
+          discountedPrice: "",
+          stock: "",
+          images: [],
+        },
       ],
     });
   };
@@ -196,12 +203,15 @@ const CreateProduct = () => {
     categories.forEach((category) => {
       payload.append("categories", category);
     });
-
     formData.variants.forEach((variant, index) => {
       payload.append(`variants[${index}][size]`, variant.size);
       payload.append(`variants[${index}][color]`, variant.color);
       payload.append(`variants[${index}][price]`, variant.price);
       payload.append(`variants[${index}][stock]`, variant.stock);
+      payload.append(
+        `variants[${index}][discountedPrice]`,
+        variant.discountedPrice
+      );
 
       variant.images.forEach((image) => {
         payload.append(`variants[${index}][images]`, image);
@@ -440,6 +450,15 @@ const CreateProduct = () => {
                   value={variant.price}
                   onChange={(e) => handleVariantChange(index, e)}
                   required
+                />
+                <TextField
+                  label="Discounted Price"
+                  variant="outlined"
+                  fullWidth
+                  type="number"
+                  name="discountedPrice"
+                  value={variant.discountedPrice}
+                  onChange={(e) => handleVariantChange(index, e)}
                 />
 
                 <TextField

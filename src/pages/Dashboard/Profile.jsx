@@ -204,7 +204,7 @@ const Profile = () => {
   }, [user._id]);
 
   return (
-    <Box className="max-w-3xl mx-auto p-6 bg-secondary rounded-md shadow-md">
+    <Box className="max-w-3xl mx-auto p-6 bg-secondary rounded-md shadow-md relative">
       <h2 className="text-xl md:text-2xl text-center mb-6 font-bold text-dark">
         Profile Information
       </h2>
@@ -231,10 +231,10 @@ const Profile = () => {
         </div>
       ) : (
         <>
-          <div className="relative">
+          <div className="">
             {/* Cover Image */}
             <div
-              className="w-full h-48 bg-cover bg-center rounded-md cursor-pointer"
+              className="w-full h-48 bg-cover bg-center mt-10 rounded-md hover:opacity-60"
               style={{
                 backgroundImage: `url(${
                   brandInfo?.coverImage?.url ||
@@ -250,31 +250,31 @@ const Profile = () => {
                 onChange={(e) => handleImageUpload(e, "coverImage")}
               />
               <label htmlFor="coverInput" className="w-full h-full block" />
-              {imgLoading.logo && (
+              {imgLoading.cover && (
                 <CircularProgress className="absolute inset-0 m-auto" />
               )}
             </div>
-
-            {/* Logo */}
-            <div className="relative -bottom-20 left-1/2 transform -translate-x-1/2 w-40 h-40">
-              {" "}
+            <div
+              className="w-20 h-20 absolute top-2 right-3 rounded-full bg-contain  bg-center hover:opacity-60"
+              style={{
+                backgroundImage: `url(${
+                  brandInfo?.logo?.url || "https://placehold.co/600x400/png"
+                })`,
+              }}
+            >
               <input
                 type="file"
                 accept="image/*"
                 id="logoInput"
+                hidden
                 onChange={(e) => handleImageUpload(e, "logo")}
               />
-              <Avatar
-                style={{ width: "100px", height: "100px" }}
-                src={brandInfo?.logo?.url || "https://placehold.co/600x400/png"}
-                className="w-full rounded-full h-full border-4 border-white cursor-pointer"
-              >
-                <label htmlFor="logoInput" className="w-full h-full block" />
-                {imgLoading.logo && (
-                  <CircularProgress className="absolute inset-0 m-auto" />
-                )}
-              </Avatar>
+              <label htmlFor="logoInput" className="w-full h-full block" />
+              {imgLoading.logo && (
+                <CircularProgress className="absolute inset-0 m-auto" />
+              )}
             </div>
+            {/* Logo */}
           </div>
 
           <Box className="space-y-6 mt-5">

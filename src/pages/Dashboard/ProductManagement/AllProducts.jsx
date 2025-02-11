@@ -76,7 +76,6 @@ const AllProducts = () => {
       setDeletingProductId(null); // Hide loader after API call
     }
   };
-
   const handleEdit = async (productId) => {
     setEditPopUp(true);
     setEditingProductId(productId);
@@ -148,7 +147,7 @@ const AllProducts = () => {
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>
                       <img
-                        src={product.variants?.[0].images[0]}
+                        src={product.variants?.[0].images[0].url}
                         alt={product.name}
                         className="w-12 h-12 object-cover rounded"
                       />
