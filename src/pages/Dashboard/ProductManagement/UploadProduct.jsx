@@ -38,6 +38,39 @@ const CreateProduct = () => {
   const [selectedSubSubCategory, setSelectedSubSubCategory] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Add these new states
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [selectedSizes, setSelectedSizes] = useState([]);
+  const [colorImageMap, setColorImageMap] = useState({});
+
+  // Replace handleAddVariant/handleRemoveVariant with this
+  useEffect(() => {
+    // Generate variants when colors/sizes change
+    const newVariants = selectedColors.flatMap((color) =>
+      selectedSizes.map((size) => ({
+        size,
+        color,
+        price: "",
+        stock: "",
+        discountedPrice: "",
+        images: colorImageMap[color] || [],
+      }))
+    );
+
+    setFormData((prev) => ({
+      ...prev,
+      variants: newVariants,
+    }));
+  }, [selectedColors, selectedSizes, colorImageMap]);
+
+  // New handler for color images
+  const handleColorImageUpload = (color, files) => {
+    setColorImageMap((prev) => ({
+      ...prev,
+      [color]: [...(prev[color] || []), ...files],
+    }));
+  };
+
   const isFootwear = selectedSubCategory?.name?.toLowerCase() === "footwear";
   const availableSizes = isFootwear ? shoeSizes : clothingSizes;
 
@@ -92,28 +125,6 @@ const CreateProduct = () => {
     }
   };
 
-  // Handler for adding/removing variants
-  const handleAddVariant = () => {
-    setFormData({
-      ...formData,
-      variants: [
-        ...formData.variants,
-        {
-          size: "",
-          color: "",
-          price: "",
-          discountedPrice: "",
-          stock: "",
-          images: [],
-        },
-      ],
-    });
-  };
-
-  const handleRemoveVariant = (index) => {
-    const updatedVariants = formData.variants.filter((_, i) => i !== index);
-    setFormData({ ...formData, variants: updatedVariants });
-  };
   // Handler for variant input changes
   const handleVariantChange = (index, e) => {
     const { name, value } = e.target;
@@ -133,7 +144,14 @@ const CreateProduct = () => {
   // Handler for form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    // Validate color images
+    const missingImages = selectedColors.some(
+      (color) => !colorImageMap[color]?.length
+    );
+    if (missingImages) {
+      toast.error("Please upload images for all selected colors");
+      return;
+    }
     if (
       !selectedMainCategory ||
       !selectedSubCategory ||
@@ -217,6 +235,10 @@ const CreateProduct = () => {
         payload.append(`variants[${index}][images]`, image);
       });
     });
+
+    for (let pair of payload.entries()) {
+      console.log(pair[0], pair[1]);
+    }
 
     try {
       setLoading(true);
@@ -379,48 +401,37 @@ const CreateProduct = () => {
               decisions.
             </p>
           </div>
-          {/* Variants Section */}
-          {formData.variants.map((variant, index) => (
-            <div key={index} className="mb-6 border p-4 rounded-lg">
-              <div className="flex justify-between items-center mb-4">
-                <p className=" font-bold">Variant {index + 1}</p>
-              </div>
 
-              {/* Size and Color Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                {/* Size Dropdown */}
+          {/* variants selection  */}
+          {selectedSubSubCategory && (
+            <>
+              <div className="mb-4 bg-orange-200 p-4 rounded-md">
+                <div className="flex flex-col gap-3 mb-4">
+                  <p className="font-bold">
+                    {" "}
+                    <span className="text-orange-600">*</span> Variant 1{" "}
+                  </p>
+                  <p className="text-sm">Variant Name</p>
+                  <p className="text-sm">Color Family</p>
+                </div>
                 <FormControl fullWidth>
-                  <InputLabel>Size</InputLabel>
+                  <InputLabel>Select Colors</InputLabel>
                   <Select
-                    label="Size"
-                    name="size"
-                    value={variant.size}
-                    onChange={(e) => handleVariantChange(index, e)}
-                  >
-                    {availableSizes.map((size) => (
-                      <MenuItem key={size} value={size}>
-                        {size}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                {/* Color Dropdown */}
-                <FormControl fullWidth>
-                  <InputLabel>Color</InputLabel>
-                  <Select
-                    label="Color"
-                    name="color"
-                    value={variant.color}
-                    onChange={(e) => handleVariantChange(index, e)}
+                    multiple
+                    label="Select Colors"
+                    value={selectedColors}
+                    onChange={(e) => setSelectedColors(e.target.value)}
                     renderValue={(selected) => (
-                      <div className="flex items-center">
-                        <div
-                          className="w-6 h-6 rounded-full mr-2 border"
-                          style={{ backgroundColor: selected }}
-                        ></div>
-                        {colorOptions.find((c) => c.value === selected)?.name ||
-                          selected}
+                      <div className="flex flex-wrap gap-1">
+                        {selected.map((color) => (
+                          <div key={color} className="flex items-center">
+                            <div
+                              className="w-4 h-4 rounded-full mr-1"
+                              style={{ backgroundColor: color }}
+                            />
+                            {colorOptions.find((c) => c.value === color)?.name}
+                          </div>
+                        ))}
                       </div>
                     )}
                   >
@@ -430,7 +441,7 @@ const CreateProduct = () => {
                           <div
                             className="w-6 h-6 rounded-full mr-2 border"
                             style={{ backgroundColor: color.value }}
-                          ></div>
+                          />
                           {color.name}
                         </div>
                       </MenuItem>
@@ -438,17 +449,81 @@ const CreateProduct = () => {
                   </Select>
                 </FormControl>
               </div>
+              {/* Color Image Uploads */}
+              {selectedColors.map((color) => (
+                <div key={color} className="mb-4">
+                  <InputLabel>
+                    <span className="text-orange-600 font-bold text-xl">*</span>{" "}
+                    Upload Images for{" "}
+                    {colorOptions.find((c) => c.value === color)?.name} variant
+                  </InputLabel>
+                  <input
+                    type="file"
+                    multiple
+                    onChange={(e) =>
+                      handleColorImageUpload(color, Array.from(e.target.files))
+                    }
+                    className="border p-2 w-full rounded"
+                    accept="image/*"
+                  />
+                </div>
+              ))}
+              <div className="mb-4 bg-orange-200 p-4 rounded-md">
+                <div className="flex flex-col gap-3 mb-4">
+                  <p className="font-bold">
+                    {" "}
+                    <span className="text-orange-600">*</span> Variant 2{" "}
+                  </p>
+                  <p className="text-sm">Variant Name</p>
+                  <p className="text-sm">Size</p>
+                </div>
+                <FormControl fullWidth>
+                  <InputLabel>Select Sizes</InputLabel>
+                  <Select
+                    label="Sizes"
+                    multiple
+                    value={selectedSizes}
+                    onChange={(e) => setSelectedSizes(e.target.value)}
+                  >
+                    {availableSizes.map((size) => (
+                      <MenuItem key={size} value={size}>
+                        {size}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
+            </>
+          )}
 
-              {/* Price and Stock Row */}
+          {/* Modified Variants Display */}
+          {formData.variants.map((variant, index) => (
+            <div key={index} className="mb-6 border p-4 rounded-lg">
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <TextField
+                  label="Size"
+                  value={variant.size}
+                  disabled
+                  fullWidth
+                />
+                <TextField
+                  label="Color"
+                  value={
+                    colorOptions.find((c) => c.value === variant.color)?.name
+                  }
+                  disabled
+                  fullWidth
+                />
+              </div>
+
+              {/* Rest of variant fields remain same */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <TextField
                   label="Price"
-                  variant="outlined"
-                  fullWidth
-                  type="number"
                   name="price"
                   value={variant.price}
                   onChange={(e) => handleVariantChange(index, e)}
+                  fullWidth
                   required
                 />
                 <TextField
@@ -460,7 +535,6 @@ const CreateProduct = () => {
                   value={variant.discountedPrice}
                   onChange={(e) => handleVariantChange(index, e)}
                 />
-
                 <TextField
                   label="Stock"
                   variant="outlined"
@@ -470,40 +544,11 @@ const CreateProduct = () => {
                   value={variant.stock}
                   onChange={(e) => handleVariantChange(index, e)}
                   required
-                />
+                />{" "}
               </div>
-
-              {/* Image Upload */}
-              <div className="mb-4">
-                <input
-                  type="file"
-                  multiple
-                  onChange={(e) => handleImageChange(index, e)}
-                  className="border p-2 w-full rounded"
-                  accept="image/*"
-                />
-              </div>
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={() => handleRemoveVariant(index)}
-                fullWidth
-                size="small"
-              >
-                Remove Variant
-              </Button>
             </div>
           ))}
-          {/* Add Variant Button */}
-          <div className="mb-4">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddVariant}
-            >
-              Add Variant
-            </Button>
-          </div>
+
           {/* Submit Button */}
           <div className="mb-4">
             <Button

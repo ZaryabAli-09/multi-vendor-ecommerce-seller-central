@@ -1,91 +1,169 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-import StarRating from "../../../components/common ui comps/StarRating.jsx";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import ProductSlider from "../../../components/common ui comps/productSlider.jsx";
-
-import { toast } from "react-hot-toast";
 function Product() {
-  const dispatch = useDispatch();
-  const [product, setProduct] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const { productId } = useParams();
-  const naviage = useNavigate();
-  console.log(product);
+  const product = {
+    _id: "67ae3816104f4c0debc1b13d",
+    seller: "674a1d35b7c4360c86e36baa",
+    name: "t shirt",
+    description: "jgjhgjhghgjhgj",
+    slug: "t-shirt",
+    numReviews: 0,
+    sold: 0,
+    rating: 0,
+    countInStock: 29,
+    categories: [
+      "6719565189598c10e7a7dfde",
+      "671956aa29acfa9cf833d398",
+      "6719578629acfa9cf833d3ac",
+    ],
+    reviews: [],
+    variants: [
+      {
+        _id: "67ae3816104f4c0debc1b13e",
+        size: "M",
+        color: "#FF0000",
+        price: 1000,
+        discountedPrice: null,
+        stock: 5,
+        images: [
+          {
+            url: "https://res.cloudinary.com/dv4utklyo/image/upload/v1739471378/product-images/l3dbaaj5g1muaoli491g.jpg",
+            public_id: "product-images/cjqrwuqelhtl6zjjp8g5",
+            _id: "67ae3816104f4c0debc1b13f",
+          },
+        ],
+      },
+      {
+        _id: "67ae3816104f4c0debc1b140",
+        size: "S",
+        color: "#FF0000",
+        price: 900,
+        discountedPrice: null,
+        stock: 8,
+        images: [
+          {
+            url: "https://res.cloudinary.com/dv4utklyo/image/upload/v1739471378/product-images/l3dbaaj5g1muaoli491g.jpg",
+            public_id: "product-images/cjqrwuqelhtl6zjjp8g5",
+            _id: "67ae3816104f4c0debc1b141",
+          },
+        ],
+      },
+      {
+        _id: "67ae3816104f4c0debc1b142",
+        size: "M",
+        color: "#0000FF",
+        price: 2000,
+        discountedPrice: null,
+        stock: 10,
+        images: [
+          {
+            url: "https://res.cloudinary.com/dv4utklyo/image/upload/v1739471379/product-images/prczshs83mdlscwuibtu.jpg",
+            public_id: "product-images/vyzagud5nift3c2sdif1",
+            _id: "67ae3816104f4c0debc1b143",
+          },
+        ],
+      },
+      {
+        _id: "67ae3816104f4c0debc1b144",
+        size: "S",
+        color: "#0000FF",
+        price: 1990,
+        discountedPrice: null,
+        stock: 15,
+        images: [
+          {
+            url: "https://res.cloudinary.com/dv4utklyo/image/upload/v1739471379/product-images/prczshs83mdlscwuibtu.jpg",
+            public_id: "product-images/vyzagud5nift3c2sdif1",
+            _id: "67ae3816104f4c0debc1b145",
+          },
+        ],
+      },
+    ],
+    createdAt: "2025-02-13T18:21:10.108Z",
+    updatedAt: "2025-02-13T18:21:10.108Z",
+    __v: 0,
+  };
+  const [selectedColor, setSelectedColor] = useState(product.variants[0].color);
+  const [selectedSize, setSelectedSize] = useState(product.variants[0].size);
 
-  async function fetchProduct() {
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/product/single/${productId}`
-      );
-      if (!response.ok) throw new Error("Failed to fetch product details");
-      const data = await response.json();
-      setProduct(data.data);
-    } catch (error) {
-      toast.error(error.message);
-      setError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-  useEffect(() => {
-    fetchProduct();
-  }, [productId]);
+  // Filter variants based on selected color
+  const colorVariants = product.variants.filter(
+    (v) => v.color === selectedColor
+  );
 
-  if (isLoading) {
-    return (
-      <main className={`relative flex justify-center items-center }`}>
-        <span className="text-6xl text-pink-600 font-bold">Loading...</span>
-      </main>
-    );
-  } else if (error) {
-    return (
-      <main className="flex justify-center items-center h-screen">
-        <p>Something went wrong. Please try again.</p>
-      </main>
-    );
-  } else if (product) {
-    return (
-      <main className="py-14 px-4 sm:px-8 lg:px-16">
-        <div className="flex flex-col lg:flex-row justify-between items-center lg:h-96 gap-6">
-          <div className="w-full lg:w-1/2  lg:h-full">
-            <ProductSlider sliderImgs={product.images} />
-          </div>
-          <div className="flex flex-col gap-5 w-full lg:w-1/2 px-4">
-            <h1 className="text-2xl font-medium">
-              {product.name.toUpperCase()}
-            </h1>
-            <StarRating
-              rating={product.rating}
-              numReviews={product.numReviews}
+  // Find the variant matching both color & size
+  const selectedVariant =
+    colorVariants.find((v) => v.size === selectedSize) || colorVariants[0];
+
+  return (
+    <div className="max-w-2xl mx-auto p-6 border rounded-lg shadow-lg bg-white">
+      <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
+      <p className="text-gray-600">{product.description}</p>
+
+      {/* Display Images */}
+      <div className="mt-4">
+        <img
+          src={selectedVariant.images[0].url}
+          alt="Product"
+          className="w-full h-64 object-cover rounded-lg"
+        />
+      </div>
+
+      {/* Color Selection */}
+      <div className="mt-4 flex gap-2">
+        {Array.from(new Set(product?.variants.map((v) => v.color))).map(
+          (color) => (
+            <button
+              key={color}
+              className={`w-8 h-8 rounded-full border ${
+                selectedColor === color ? "ring-2 ring-black" : ""
+              }`}
+              style={{ backgroundColor: color }}
+              onClick={() => setSelectedColor(color)}
             />
-            <span>
-              {product.categories?.map((category, index) => (
-                <span key={category._id}>
-                  {category.name}
-                  {index < product.categories.length - 1 ? " > " : ""}
-                </span>
-              ))}
-            </span>
-            <span className="text-3xl text-gray-700 font-semibold">
-              Price: ${product.discountedPrice || product.price}
-            </span>
-            <span className="text-xl text-gray-600">
-              In Stock: {product.countInStock}
-            </span>
-            <span className="text-xl text-gray-600">Sold: {product.sold}</span>
-            <details>
-              <summary className="text-xl font-semibold">Description</summary>
-              <p className="text-gray-700">{product.description}</p>
-            </details>
-          </div>
-        </div>
-      </main>
-    );
-  }
+          )
+        )}
+      </div>
+
+      {/* Size Selection */}
+      <div className="mt-4">
+        <label className="font-semibold">Size: </label>
+        <select
+          value={selectedSize}
+          onChange={(e) => setSelectedSize(e.target.value)}
+          className="ml-2 border p-1 rounded"
+        >
+          {colorVariants.map((variant) => (
+            <option key={variant.size} value={variant.size}>
+              {variant.size}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Price & Stock */}
+      <div className="mt-4">
+        <p className="text-lg font-semibold">
+          Price:
+          {selectedVariant.discountedPrice ? (
+            <>
+              <span className="line-through text-gray-500 ml-2">
+                ${selectedVariant.price}
+              </span>
+              <span className="text-red-500 ml-2">
+                ${selectedVariant.discountedPrice}
+              </span>
+            </>
+          ) : (
+            <span className="ml-2">${selectedVariant.price}</span>
+          )}
+        </p>
+        <p className="text-sm text-gray-600">
+          Stock: {selectedVariant.stock} left
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export default Product;
