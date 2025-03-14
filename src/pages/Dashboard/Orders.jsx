@@ -27,6 +27,8 @@ const Orders = () => {
   const [isFetching, setIsFetching] = useState(true); // For initial data fetch skeleton
   const [updatingStatus, setUpdatingStatus] = useState(false); // For status update loader
 
+  console.log(orders);
+
   // Fetch all orders
   const fetchOrders = async () => {
     try {
