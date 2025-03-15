@@ -46,6 +46,11 @@ const DASHBOARD_SIDEBAR_LINKS = [
     path: "/dashboard?tab=orders",
     icon: <HiOutlineShoppingCart />,
   },
+  {
+    label: "Reviews",
+    path: "/dashboard?tab=reviews",
+    icon: <HiOutlineShoppingCart />,
+  },
 ];
 
 const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [

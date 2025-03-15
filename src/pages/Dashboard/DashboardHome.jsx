@@ -9,6 +9,7 @@ import Orders from "./Orders";
 import Profile from "./Profile";
 import Billing from "./Billing";
 import Settings from "./Settings";
+import Reviews from "./ReviewsManagement/Reviews";
 
 const DashboardHome = () => {
   const location = useLocation();
@@ -44,6 +45,7 @@ const DashboardHome = () => {
 
           {tab === "products" && <AllProducts />}
           {tab === "orders" && <Orders />}
+          {tab === "reviews" && <Reviews />}
           {tab === "settings" && <Settings />}
           {tab === "billing" && <Billing />}
         </div>
