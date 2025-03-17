@@ -43,6 +43,7 @@ const SellerDashboard = () => {
           throw new Error("Failed to fetch data");
         }
         const result = await response.json();
+        console.log(result);
         setData(result);
       } catch (err) {
         setError(err.message);
@@ -197,34 +198,96 @@ const SellerDashboard = () => {
         gutterBottom
         sx={{ marginTop: 3, fontWeight: "bold", color: "#333" }}
       >
-        Product Category Demographics
+        Product Category Insights
       </Typography>
-      <Paper
-        sx={{ padding: 2, marginBottom: 4, borderRadius: 2, boxShadow: 3 }}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" }, // Stack vertically on small screens, side by side on medium and larger screens
+          gap: 4, // Add spacing between the two charts
+          marginBottom: 4,
+        }}
       >
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={data.productCategoryDataArray}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-              label
-            >
-              {data.productCategoryDataArray.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </ResponsiveContainer>
-      </Paper>
+        {/* Product Sales Category Demographics */}
+        <Paper
+          sx={{
+            padding: 2,
+            borderRadius: 2,
+            boxShadow: 3,
+            flex: 1, // Take up equal space
+          }}
+        >
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{ fontWeight: "bold", color: "#333", textAlign: "center" }}
+          >
+            Sales by Product Category
+          </Typography>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={data.productCategoryDataArray}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+                label={false} // Disable labels
+              >
+                {data.productCategoryDataArray.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </Paper>
+
+        {/* Total Product Category Demographics */}
+        <Paper
+          sx={{
+            padding: 2,
+            borderRadius: 2,
+            boxShadow: 3,
+            flex: 1, // Take up equal space
+          }}
+        >
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{ fontWeight: "bold", color: "#333", textAlign: "center" }}
+          >
+            Product Distribution by Category
+          </Typography>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={data.totalSellerProductCategories}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+                label={false} // Disable labels
+              >
+                {data.totalSellerProductCategories.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </Paper>
+      </Box>
 
       {/* Order Status */}
       <Typography
