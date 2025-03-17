@@ -43,6 +43,24 @@ const CreateProduct = () => {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [colorImageMap, setColorImageMap] = useState({});
 
+  // Function to reset the form
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      description: "",
+      price: "",
+      category: "",
+      variants: [{ size: "", color: "", price: "", stock: "", images: [] }],
+    });
+    setSelectedMainCategory(null);
+    setSelectedSubCategory(null);
+    setSelectedSubSubCategory(null);
+    setSelectedColors([]);
+    setSelectedSizes([]);
+    setColorImageMap({});
+    toast.success("Form reset successfully!");
+  };
+
   // Replace handleAddVariant/handleRemoveVariant with this
   useEffect(() => {
     // Generate variants when colors/sizes change
@@ -548,9 +566,8 @@ const CreateProduct = () => {
               </div>
             </div>
           ))}
-
-          {/* Submit Button */}
-          <div className="mb-4">
+          {/* Submit and Reset Buttons */}
+          <div className="mb-4 flex gap-4">
             <Button
               variant="contained"
               color="secondary"
@@ -563,6 +580,14 @@ const CreateProduct = () => {
               ) : (
                 "Create Product"
               )}
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              fullWidth
+              onClick={resetForm}
+            >
+              Reset
             </Button>
           </div>
         </form>

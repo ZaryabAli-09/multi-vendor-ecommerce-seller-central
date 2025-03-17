@@ -7,7 +7,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Avatar,
   CircularProgress,
   Skeleton,
 } from "@mui/material";
@@ -48,8 +47,8 @@ const schema = yup.object({
 
 // Reusable Profile Field Component
 const ProfileField = ({ label, value }) => (
-  <div className="flex  flex-col space-x-1 space-y-1  p-2">
-    <p className=" text-sm text-dark font-bold">{label}:</p>
+  <div className="flex flex-col space-x-1 space-y-1 p-2">
+    <p className="text-sm text-dark font-bold">{label}:</p>
     <p className="text-sm text-light">{value || "N/A"}</p>
   </div>
 );
@@ -59,7 +58,7 @@ const SocialLinkButton = ({ icon, label, onClick }) => (
   <Button
     onClick={onClick}
     startIcon={icon}
-    className="flex   hover:bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 "
+    className="flex hover:bg-gray-100 border border-gray-300 rounded-lg px-4 py-2"
   >
     {/* {label} */}
   </Button>
@@ -73,8 +72,11 @@ const Profile = () => {
   const [isFetching, setIsFetching] = useState(true); // For initial data fetch skeleton
 
   const [imgLoading, setImgLoading] = useState({ cover: false, logo: false });
+  const [isUploading, setIsUploading] = useState(false); // Track image upload state
 
   const handleImageUpload = async (e, type) => {
+    setIsUploading(true); // Start uploading
+
     const file = e.target.files[0];
     if (!file) return;
 
@@ -108,6 +110,7 @@ const Profile = () => {
     } catch (error) {
       console.error(`Error uploading ${type}:`, error);
     } finally {
+      setIsUploading(false); // Stop uploading
       setImgLoading((prev) => ({ ...prev, [type]: false }));
     }
   };
@@ -197,7 +200,6 @@ const Profile = () => {
       setIsFetching(false); // Hide skeleton after data is fetched
     }
   };
-  console.log(brandInfo);
 
   useEffect(() => {
     fetchBrandInfo();
@@ -205,6 +207,14 @@ const Profile = () => {
 
   return (
     <Box className="max-w-3xl mx-auto p-6 bg-secondary rounded-md shadow-md relative">
+      {/* Overlay and Loader */}
+      {isUploading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          {/* <div className="bg-white p-6 rounded-lg text-center"> */}
+          <CircularProgress className="text-primary" />
+          {/* </div> */}
+        </div>
+      )}
       <h2 className="text-xl md:text-2xl text-center mb-6 font-bold text-dark">
         Profile Information
       </h2>
@@ -234,7 +244,7 @@ const Profile = () => {
           <div className="">
             {/* Cover Image */}
             <div
-              className="w-full h-48 bg-cover bg-center mt-10 rounded-md hover:opacity-60"
+              className="w-full h-48 bg-cover bg-center mt-10 rounded-md hover:opacity-60 relative"
               style={{
                 backgroundImage: `url(${
                   brandInfo?.coverImage?.url ||
@@ -248,14 +258,16 @@ const Profile = () => {
                 hidden
                 id="coverInput"
                 onChange={(e) => handleImageUpload(e, "coverImage")}
+                disabled={isUploading} // Disable input during upload
               />
               <label htmlFor="coverInput" className="w-full h-full block" />
               {imgLoading.cover && (
                 <CircularProgress className="absolute inset-0 m-auto" />
               )}
             </div>
+            {/* Logo */}
             <div
-              className="w-20 h-20 absolute top-2 right-3 rounded-full bg-contain  bg-center hover:opacity-60"
+              className="w-40 h-40 absolute top-48 left-1/2 transform -translate-x-1/2 rounded-full bg-contain bg-center hover:opacity-60 cursor-pointer"
               style={{
                 backgroundImage: `url(${
                   brandInfo?.logo?.url || "https://placehold.co/600x400/png"
@@ -268,13 +280,10 @@ const Profile = () => {
                 id="logoInput"
                 hidden
                 onChange={(e) => handleImageUpload(e, "logo")}
+                disabled={isUploading} // Disable input during upload
               />
               <label htmlFor="logoInput" className="w-full h-full block" />
-              {imgLoading.logo && (
-                <CircularProgress className="absolute inset-0 m-auto" />
-              )}
             </div>
-            {/* Logo */}
           </div>
 
           <Box className="space-y-6 mt-5">
