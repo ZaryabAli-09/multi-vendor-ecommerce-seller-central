@@ -5,7 +5,7 @@ import { IoStar } from "react-icons/io5";
 import { IoStarHalfOutline } from "react-icons/io5";
 import { IoStarOutline } from "react-icons/io5";
 
-function StarRating({ rating, numReviews }) {
+function StarRating({ rating }) {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 > 0;
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
@@ -41,8 +41,6 @@ function StarRating({ rating, numReviews }) {
           </span>
         )}
       </div>
-
-      <span className="relative text-xs top-[1px]">{numReviews} Ratings</span>
     </div>
   );
 }

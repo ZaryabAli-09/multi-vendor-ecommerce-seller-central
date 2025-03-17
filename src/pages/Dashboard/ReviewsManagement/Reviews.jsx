@@ -16,6 +16,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
+import StarRating from "../../../components/common ui comps/StarRating";
 
 const Reviews = () => {
   const { user } = useSelector((state) => state.auth);
@@ -134,7 +135,9 @@ const Reviews = () => {
                       <TableCell>{review.user?.name}</TableCell>
                       <TableCell>{review.product?.name}</TableCell>
 
-                      <TableCell>{review.rating}/5</TableCell>
+                      <TableCell>
+                        <StarRating rating={review.rating} />
+                      </TableCell>
                       {review.sellerReply?.text ? (
                         <TableCell>
                           <span className="bg-green-500 rounded-md font-semibold text-sm text-white p-2">
@@ -185,6 +188,13 @@ const Reviews = () => {
                               <strong>Review At:</strong>{" "}
                               {new Date(review.createdAt).toLocaleDateString()}
                             </p>
+                            {hasReply && (
+                              <p className="mt-3 bg-yellow-300 p-2 rounded-md">
+                                {" "}
+                                <strong>Your Reply:</strong>{" "}
+                                {review.sellerReply?.text}
+                              </p>
+                            )}
                             {!hasReply && (
                               <Button
                                 variant="contained"
