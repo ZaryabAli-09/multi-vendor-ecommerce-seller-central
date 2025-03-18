@@ -20,16 +20,13 @@ import { FaEye } from "react-icons/fa";
 
 const Orders = () => {
   const { user } = useSelector((state) => state.auth); // Logged-in user (seller)
-
   const [orders, setOrders] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(true); // For initial data fetch skeleton
   const [updatingStatus, setUpdatingStatus] = useState(false); // For status update loader
 
-  console.log(orders);
-
-  // Fetch all orders
+  // Fetch all orders for the seller
   const fetchOrders = async () => {
     try {
       setIsFetching(true); // Show skeleton while fetching data
@@ -57,7 +54,7 @@ const Orders = () => {
     }
   };
 
-  // Handle status change for a sub-order
+  // Handle status change for an order
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       setUpdatingStatus(true); // Show loader on status change
@@ -78,14 +75,9 @@ const Orders = () => {
       } else {
         // Update the status in the local state
         setOrders((prevOrders) =>
-          prevOrders.map((order) => ({
-            ...order,
-            subOrders: order.subOrders.map((subOrder) =>
-              subOrder._id === orderId
-                ? { ...subOrder, status: newStatus }
-                : subOrder
-            ),
-          }))
+          prevOrders.map((order) =>
+            order._id === orderId ? { ...order, status: newStatus } : order
+          )
         );
         toast.success(result.message);
       }
@@ -105,17 +97,6 @@ const Orders = () => {
   useEffect(() => {
     fetchOrders();
   }, [user._id]);
-
-  // Filter sub-orders to include only the seller's sub-orders
-  const sellerSubOrders = orders.flatMap((order) =>
-    order.subOrders
-      .filter((subOrder) => subOrder.seller === user._id)
-      .map((subOrder) => ({
-        ...subOrder,
-        orderId: order._id, // Include the parent order ID
-        orderBy: order.orderBy, // Include the customer details
-      }))
-  );
 
   return (
     <>
@@ -160,29 +141,26 @@ const Orders = () => {
                     </TableCell>
                   </TableRow>
                 ))
-              ) : sellerSubOrders.length === 0 ? (
+              ) : !orders || orders.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center">
                     No orders found.
                   </TableCell>
                 </TableRow>
               ) : (
-                sellerSubOrders.map((subOrder, index) => (
-                  <TableRow key={subOrder._id}>
+                orders &&
+                orders.map((order, index) => (
+                  <TableRow key={order._id}>
                     <TableCell>{index + 1}</TableCell>
-                    <TableCell>{subOrder.orderId}</TableCell>{" "}
-                    {/* Parent Order ID */}
-                    <TableCell>{subOrder.orderBy?.name}</TableCell>{" "}
-                    {/* Customer Name */}
-                    <TableCell>{subOrder.orderBy?.email}</TableCell>{" "}
-                    {/* Customer Email */}
-                    <TableCell>${subOrder.totalAmount}</TableCell>{" "}
-                    {/* Sub-Order Total */}
+                    <TableCell>{order._id}</TableCell>
+                    <TableCell>{order.orderBy?.name}</TableCell>
+                    <TableCell>{order.orderBy?.email}</TableCell>
+                    <TableCell>${order.totalAmount}</TableCell>
                     <TableCell>
                       <Select
-                        value={subOrder.status}
+                        value={order.status}
                         onChange={(e) =>
-                          handleStatusChange(subOrder.orderId, e.target.value)
+                          handleStatusChange(order._id, e.target.value)
                         }
                         disabled={updatingStatus}
                         size="small"
@@ -195,7 +173,7 @@ const Orders = () => {
                     </TableCell>
                     <TableCell>
                       <Button
-                        onClick={() => handleViewDetails(subOrder.orderId)} // Use parent order ID
+                        onClick={() => handleViewDetails(order._id)}
                         variant="contained"
                         color="primary"
                         size="small"

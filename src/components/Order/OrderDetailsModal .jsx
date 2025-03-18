@@ -29,7 +29,6 @@ const OrderDetailsModal = ({ open, onClose, orderId }) => {
     }
   }, [orderId]);
 
-  console.log(order);
   if (!order) return null;
 
   return (
@@ -62,110 +61,103 @@ const OrderDetailsModal = ({ open, onClose, orderId }) => {
           Customer Email: {order.orderBy?.email}
         </Typography>
 
-        {/* Display Sub-Orders */}
-        {order.subOrders.map((subOrder, index) => (
-          <Box key={subOrder._id} sx={{ mt: 4 }}>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Product</TableCell>
-                    <TableCell>Variant</TableCell>
-                    <TableCell>Quantity</TableCell>
-                    <TableCell>Price</TableCell>
-                    <TableCell>Discounted Price</TableCell>
-                    <TableCell>Total</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {subOrder.orderItems.map((item) => {
-                    // Find the selected variant
-                    const selectedVariant = item.product.variants.find(
-                      (variant) =>
-                        variant._id.toString() === item.variantId.toString()
-                    );
+        {/* Display Order Items */}
+        <TableContainer component={Paper} sx={{ mt: 4 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Product</TableCell>
+                <TableCell>Variant</TableCell>
+                <TableCell>Quantity</TableCell>
+                <TableCell>Price</TableCell>
+                <TableCell>Discounted Price</TableCell>
+                <TableCell>Total</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {order.orderItems.map((item) => {
+                // Find the selected variant
+                const selectedVariant = item.product.variants.find(
+                  (variant) =>
+                    variant._id.toString() === item.variantId.toString()
+                );
 
-                    return (
-                      <TableRow key={item._id}>
-                        <TableCell>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <img
-                              src={selectedVariant.images[0].url}
-                              alt={item.product.name}
-                              style={{
-                                width: 50,
-                                height: 50,
-                                marginRight: 10,
-                                borderRadius: "8px", // Rounded corners for the image
-                              }}
-                            />
-                            <Typography variant="body2">
-                              {item.product.name}
-                            </Typography>
-                          </Box>
-                        </TableCell>
-                        <TableCell>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <Box
-                              sx={{
-                                width: 20,
-                                height: 20,
-                                borderRadius: "50%", // Round shape for color
-                                backgroundColor: selectedVariant.color,
-                                marginRight: 1,
-                              }}
-                            />
-                            <Typography variant="body2">
-                              Size: {selectedVariant.size}
-                            </Typography>
-                          </Box>
-                        </TableCell>
-                        <TableCell>{item.quantity}</TableCell>
-                        <TableCell>
-                          {selectedVariant.discountedPrice ? (
-                            <>
-                              <span className="line-through opacity-40">
-                                {selectedVariant.price}
-                              </span>{" "}
-                              {selectedVariant.discountedPrice}
-                            </>
-                          ) : (
-                            selectedVariant.price
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {selectedVariant.discountedPrice
-                            ? `$${selectedVariant.discountedPrice}`
-                            : "N/A"}
-                        </TableCell>
-                        <TableCell>
-                          {selectedVariant.discountedPrice ? (
-                            <>
-                              <span className="line-through opacity-40">
-                                {selectedVariant.price * item.quantity}
-                              </span>{" "}
-                              {selectedVariant.discountedPrice * item.quantity}
-                            </>
-                          ) : (
-                            selectedVariant.price * item.quantity
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <Box
-              sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}
-            >
-              <Typography variant="body1">
-                Total: ${subOrder.totalAmount}
-              </Typography>
-              <Typography variant="body1">Status: {subOrder.status}</Typography>
-            </Box>
-          </Box>
-        ))}
+                return (
+                  <TableRow key={item._id}>
+                    <TableCell>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <img
+                          src={selectedVariant.images[0].url}
+                          alt={item.product.name}
+                          style={{
+                            width: 50,
+                            height: 50,
+                            marginRight: 10,
+                            borderRadius: "8px", // Rounded corners for the image
+                          }}
+                        />
+                        <Typography variant="body2">
+                          {item.product.name}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: "50%", // Round shape for color
+                            backgroundColor: selectedVariant.color,
+                            marginRight: 1,
+                          }}
+                        />
+                        <Typography variant="body2">
+                          Size: {selectedVariant.size}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell>
+                      {selectedVariant.discountedPrice ? (
+                        <>
+                          <span className="line-through opacity-40">
+                            {selectedVariant.price}
+                          </span>{" "}
+                          {selectedVariant.discountedPrice}
+                        </>
+                      ) : (
+                        selectedVariant.price
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {selectedVariant.discountedPrice
+                        ? `$${selectedVariant.discountedPrice}`
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      {selectedVariant.discountedPrice ? (
+                        <>
+                          <span className="line-through opacity-40">
+                            {selectedVariant.price * item.quantity}
+                          </span>{" "}
+                          {selectedVariant.discountedPrice * item.quantity}
+                        </>
+                      ) : (
+                        selectedVariant.price * item.quantity
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}>
+          <Typography variant="body1">Total: ${order.totalAmount}</Typography>
+          <Typography variant="body1">Status: {order.status}</Typography>
+        </Box>
 
         <Button
           onClick={onClose}
