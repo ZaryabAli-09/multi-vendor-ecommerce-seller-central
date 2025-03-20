@@ -12,6 +12,10 @@ import {
   Box,
   Modal,
   TextField,
+  Select,
+  MenuItem,
+  Typography,
+  Pagination,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -27,37 +31,97 @@ const Reviews = () => {
   const [currentReview, setCurrentReview] = useState(null);
   const [replyText, setReplyText] = useState("");
   const [replyLoader, setReplyLoader] = useState(false);
+  const [filters, setFilters] = useState({
+    replyStatus: "",
+    productName: "",
+    dateFilter: "",
+  });
+  const [currentPage, setCurrentPage] = useState(1); // Current page number
+  const [totalPages, setTotalPages] = useState(1); // Total number of pages
+  const [noReviewsMessage, setNoReviewsMessage] = useState(""); // Message for no reviews
+  const limit = 10; // Reviews per page
 
-  const fetchSellerReviews = async () => {
-    setIsFetching(true);
+  // Fetch all reviews for the seller
+  const fetchSellerReviews = async (page, filters = {}) => {
     try {
+      setIsFetching(true); // Show skeleton while fetching data
+      setNoReviewsMessage(""); // Reset no reviews message
+
+      // Build query parameters
+      const queryParams = new URLSearchParams({
+        page,
+        limit,
+        ...filters,
+      }).toString();
+
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/product/review/seller/${user._id}`
+        `${import.meta.env.VITE_API_URL}/product/review/seller/${
+          user._id
+        }?${queryParams}`
       );
       const result = await res.json();
-      if (!res.ok) throw new Error(result.message);
-      setReviews(result.data);
+      console.log(result);
+      if (!res.ok) {
+        toast.error(result.message);
+      } else {
+        if (result.data.length === 0) {
+          setNoReviewsMessage(result.message || "No reviews found."); // Set no reviews message
+        } else {
+          setReviews(result.data.data); // Update reviews
+
+          const totalPages = Math.ceil(result.data.total / limit); // Calculate total pages
+          setTotalPages(totalPages);
+        }
+      }
     } catch (error) {
       toast.error(error.message);
     } finally {
-      setIsFetching(false);
+      setIsFetching(false); // Hide skeleton after data is fetched
     }
   };
 
-  useEffect(() => {
-    fetchSellerReviews();
-  }, [user._id]);
-  console.log(reviews);
+  // Handle filter change
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Apply filters
+  const applyFilters = () => {
+    setCurrentPage(1); // Reset to the first page
+    fetchSellerReviews(1, filters);
+  };
+
+  // Clear filters
+  const clearFilters = () => {
+    setFilters({
+      replyStatus: "",
+      productName: "",
+      dateFilter: "",
+    });
+    setCurrentPage(1); // Reset to the first page
+    fetchSellerReviews(1);
+  };
+
+  // Handle page change
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
+    fetchSellerReviews(page, filters);
+  };
+
+  // Handle viewing order details
   const toggleExpand = (id) => {
     setExpandedRows((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  // Open reply modal
   const openReplyModal = (review) => {
     setCurrentReview(review);
     setReplyText(review.sellerReply?.text || "");
     setModalOpen(true);
   };
 
+  // Handle reply submission
   const handleReplySubmit = async () => {
     if (replyText.length < 10) {
       toast.error("Reply must be at least 10 characters long.");
@@ -85,7 +149,7 @@ const Reviews = () => {
       }
 
       toast.success(result.message);
-      fetchSellerReviews();
+      fetchSellerReviews(currentPage, filters); // Refresh reviews after reply
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -94,8 +158,69 @@ const Reviews = () => {
     setModalOpen(false);
   };
 
+  useEffect(() => {
+    fetchSellerReviews(currentPage, filters);
+  }, [currentPage]);
+
   return (
     <div>
+      {/* Sticky Filter Section */}
+      <Box
+        sx={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1000,
+          backgroundColor: "white",
+          padding: 2,
+          boxShadow: 3,
+          marginBottom: 4,
+        }}
+      >
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
+          Filters
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 2,
+            alignItems: "center",
+          }}
+        >
+          <Select
+            label="Reply Status"
+            name="replyStatus"
+            value={filters.replyStatus}
+            onChange={handleFilterChange}
+            size="small"
+            displayEmpty
+          >
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="replied">Replied</MenuItem>
+            <MenuItem value="not replied">Not Replied</MenuItem>
+          </Select>
+          <Select
+            label="Date Filter"
+            name="dateFilter"
+            value={filters.dateFilter}
+            onChange={handleFilterChange}
+            size="small"
+            displayEmpty
+          >
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="thisWeek">This Week</MenuItem>
+            <MenuItem value="thisMonth">This Month</MenuItem>
+            <MenuItem value="lastMonth">Last Month</MenuItem>
+          </Select>
+          <Button variant="contained" onClick={applyFilters}>
+            Apply Filters
+          </Button>
+          <Button variant="outlined" onClick={clearFilters}>
+            Clear Filters
+          </Button>
+        </Box>
+      </Box>
+
       <TableContainer className="p-4" component={Paper}>
         <h2 className="text-xl md:text-2xl mb-6">Manage your Reviews</h2>
         <Table>
@@ -119,10 +244,12 @@ const Reviews = () => {
                   </TableCell>
                 ))}
               </TableRow>
-            ) : reviews.length === 0 ? (
+            ) : noReviewsMessage ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center">
-                  No reviews found.
+                <TableCell colSpan={6} className="text-center">
+                  <Typography variant="body1" color="textSecondary">
+                    {noReviewsMessage}
+                  </Typography>
                 </TableCell>
               </TableRow>
             ) : (
@@ -134,24 +261,20 @@ const Reviews = () => {
                       <TableCell>{i + 1}</TableCell>
                       <TableCell>{review.user?.name}</TableCell>
                       <TableCell>{review.product?.name}</TableCell>
-
                       <TableCell>
                         <StarRating rating={review.rating} />
                       </TableCell>
-                      {review.sellerReply?.text ? (
-                        <TableCell>
+                      <TableCell>
+                        {hasReply ? (
                           <span className="bg-green-500 rounded-md font-semibold text-sm text-white p-2">
-                            replied
+                            Replied
                           </span>
-                        </TableCell>
-                      ) : (
-                        <TableCell>
+                        ) : (
                           <span className="bg-yellow-500 text-xs line-clamp-none rounded-md font-semibold md:text-sm text-white p-2">
-                            not replied
+                            Not Replied
                           </span>
-                        </TableCell>
-                      )}
-
+                        )}
+                      </TableCell>
                       <TableCell>
                         <Button
                           variant="contained"
@@ -165,7 +288,7 @@ const Reviews = () => {
 
                     {/* Expanded Row */}
                     <TableRow>
-                      <TableCell colSpan={4} style={{ padding: 0 }}>
+                      <TableCell colSpan={6} style={{ padding: 0 }}>
                         <Collapse
                           in={expandedRows[review._id]}
                           timeout="auto"
@@ -190,7 +313,6 @@ const Reviews = () => {
                             </p>
                             {hasReply && (
                               <p className="mt-3 bg-yellow-300 p-2 rounded-md">
-                                {" "}
                                 <strong>Your Reply:</strong>{" "}
                                 {review.sellerReply?.text}
                               </p>
@@ -217,6 +339,18 @@ const Reviews = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Pagination */}
+      {!isFetching && totalPages > 1 && (
+        <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+          />
+        </Box>
+      )}
 
       {/* Reply Modal */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>

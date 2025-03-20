@@ -12,6 +12,7 @@ import ResetPassword from "./pages/Auth/ResetPassword";
 import DashboardHome from "./pages/Dashboard/DashboardHome";
 import Product from "./pages/Dashboard/ProductManagement/Product";
 import AuthenticatedRoutes from "./components/RoutesWrappers/AuthenticatedRoutes";
+import DummyOrder from "./pages/DummyOrder";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/create-dummy-order" element={<DummyOrder />} />
 
         {/* Dashboard Routes  */}
         <Route element={<AuthenticatedRoutes />}>

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Table,
@@ -10,14 +11,10 @@ import {
   CircularProgress,
   Skeleton,
   TextField,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
   Box,
   Typography,
+  Pagination,
 } from "@mui/material";
-import React, { useEffect, useState, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -30,20 +27,20 @@ const AllProducts = () => {
   const [products, setProducts] = useState([]);
   const [editingProductId, setEditingProductId] = useState(null);
   const [editPopUp, setEditPopUp] = useState(false);
-  const [isFetching, setIsFetching] = useState(true); // For initial data fetch skeleton
-  const [deletingProductId, setDeletingProductId] = useState(null); // For delete button loader
-  const [page, setPage] = useState(1); // For pagination
-  const [hasMore, setHasMore] = useState(true); // To check if more products are available
+  const [isFetching, setIsFetching] = useState(true);
+  const [deletingProductId, setDeletingProductId] = useState(null);
   const [filters, setFilters] = useState({
     category: "",
     name: "",
     minPrice: "",
     maxPrice: "",
-    stock: "",
     minSold: "",
-  }); // For filtration
+  });
+  const [currentPage, setCurrentPage] = useState(1); // Current page number
+  const [totalPages, setTotalPages] = useState(1); // Total number of pages
+  const limit = 10; // Products per page
 
-  const fetchProducts = async (page, limit, filters = {}) => {
+  const fetchProducts = async (page, filters = {}) => {
     try {
       setIsFetching(true);
 
@@ -51,7 +48,6 @@ const AllProducts = () => {
       const queryParams = new URLSearchParams({
         page,
         limit,
-        dummy: true,
         ...filters,
       }).toString();
 
@@ -71,12 +67,10 @@ const AllProducts = () => {
       if (!res.ok) {
         toast.error(result.message);
       } else {
-        if (page === 1) {
-          setProducts(result.data); // Replace products for the first page
-        } else {
-          setProducts((prev) => [...prev, ...result.data]); // Append products for subsequent pages
-        }
-        setHasMore(result.data.length > 0); // Check if more products are available
+        setProducts(result.data.data);
+        setTotalPages(Math.ceil(result.data.total / limit)); // Calculate total pages
+        console.log(result.data.total, limit);
+        console.log(totalPages);
       }
     } catch (error) {
       toast.error(error.message);
@@ -87,7 +81,7 @@ const AllProducts = () => {
 
   const handleDelete = async (productId) => {
     try {
-      setDeletingProductId(productId); // Show loader on delete button
+      setDeletingProductId(productId);
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/product/delete/${productId}`,
         {
@@ -105,7 +99,7 @@ const AllProducts = () => {
     } catch (error) {
       toast.error(error.message);
     } finally {
-      setDeletingProductId(null); // Hide loader after API call
+      setDeletingProductId(null);
     }
   };
 
@@ -120,8 +114,8 @@ const AllProducts = () => {
   };
 
   const applyFilters = () => {
-    setPage(1); // Reset to the first page when applying filters
-    fetchProducts(1, null, filters);
+    setCurrentPage(1); // Reset to the first page when applying filters
+    fetchProducts(1, filters); // Fetch all products matching filters
   };
 
   const clearFilters = () => {
@@ -130,34 +124,20 @@ const AllProducts = () => {
       name: "",
       minPrice: "",
       maxPrice: "",
-      stock: "",
       minSold: "",
     });
-    setPage(1);
-    fetchProducts(1, {});
+    setCurrentPage(1); // Reset to the first page
+    fetchProducts(1); // Fetch products without filters
   };
 
-  // Infinite Scroll
-  const handleScroll = useCallback(() => {
-    if (
-      window.innerHeight + document.documentElement.scrollTop ===
-        document.documentElement.offsetHeight &&
-      hasMore &&
-      !isFetching
-    ) {
-      setPage((prev) => prev + 1);
-      fetchProducts(page + 1, filters);
-    }
-  }, [hasMore, isFetching, page, filters]);
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
+    fetchProducts(page); // Fetch products for the selected page
+  };
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
-
-  useEffect(() => {
-    fetchProducts(page, filters);
-  }, [page, filters]);
+    fetchProducts(currentPage, filters);
+  }, [currentPage]);
 
   return (
     <>
@@ -208,14 +188,6 @@ const AllProducts = () => {
             size="small"
           />
           <TextField
-            label="Min Stock"
-            name="stock"
-            value={filters.stock}
-            onChange={handleFilterChange}
-            type="number"
-            size="small"
-          />
-          <TextField
             label="Min Sold"
             name="minSold"
             value={filters.minSold}
@@ -249,9 +221,9 @@ const AllProducts = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {isFetching && page === 1 ? (
+            {isFetching ? (
               // Skeleton Loading
-              Array.from({ length: 5 }).map((_, index) => (
+              Array.from({ length: limit }).map((_, index) => (
                 <TableRow key={index}>
                   <TableCell>
                     <Skeleton variant="text" />
@@ -328,7 +300,7 @@ const AllProducts = () => {
                       variant="contained"
                       size="small"
                       color="error"
-                      disabled={deletingProductId === product._id} // Disable button while deleting
+                      disabled={deletingProductId === product._id}
                     >
                       {deletingProductId === product._id ? (
                         <CircularProgress size={24} color="inherit" />
@@ -344,10 +316,15 @@ const AllProducts = () => {
         </Table>
       </TableContainer>
 
-      {/* Infinite Scroll Loader */}
-      {isFetching && page > 1 && (
-        <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
-          <CircularProgress />
+      {/* Pagination */}
+      {!isFetching && totalPages > 1 && (
+        <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+          />
         </Box>
       )}
 
