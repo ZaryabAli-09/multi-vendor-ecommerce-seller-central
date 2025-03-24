@@ -19,6 +19,7 @@ import {
   HiOutlineShoppingCart,
   HiOutlineCube,
   HiOutlineViewGrid,
+  HiChat,
 } from "react-icons/hi";
 import { FcBullish } from "react-icons/fc";
 import { useDispatch, useSelector } from "react-redux";
@@ -54,6 +55,12 @@ const DASHBOARD_SIDEBAR_LINKS = [
 ];
 
 const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
+  {
+    label: "Chats",
+    path: "/dashboard?tab=chat",
+    icon: <HiChat />,
+  },
+
   {
     label: "Settings",
     path: "/dashboard?tab=settings",
