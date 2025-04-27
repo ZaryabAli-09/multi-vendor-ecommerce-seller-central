@@ -1,59 +1,65 @@
-import React, { useEffect, useState } from "react";
-import { List, ListItem, ListItemText, Typography } from "@mui/material";
+import React from "react";
+import {
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+  Typography,
+  Box,
+} from "@mui/material";
+import { formatDistanceToNow } from "date-fns";
 
-const ConversationList = ({ userId, onSelectUser }) => {
-  const [conversations, setConversations] = useState([]);
-
-  // Fetch conversations when the component mounts
-  useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/chat/conversations`,
-          {
-            credentials: "include",
-          }
-        );
-        const data = await response.json();
-
-        console.log(data);
-        // Ensure data is an array
-        if (Array.isArray(data)) {
-          setConversations(data);
-        } else {
-          console.error("Invalid data format:", data);
-          setConversations([]); // Set to empty array if data is invalid
-        }
-      } catch (error) {
-        console.error("Error fetching conversations:", error);
-        setConversations([]); // Set to empty array on error
-      }
-    };
-
-    fetchConversations();
-  }, [userId]);
-
+const ConversationList = ({ conversations, onSelectBuyer }) => {
   return (
-    <div className="w-64">
-      <Typography variant="h6" className="p-4">
-        Conversations
-      </Typography>
-      <List>
-        {conversations.map((conversation) => (
+    <List
+      className="overflow-y-auto"
+      style={{ maxHeight: "calc(100vh - 64px)" }}
+    >
+      {conversations.length > 0 ? (
+        conversations.map((conversation) => (
           <ListItem
-            button
             key={conversation._id}
-            onClick={() => onSelectUser(conversation._id)}
-            className="hover:bg-gray-100"
+            button
+            onClick={() => onSelectBuyer(conversation)}
+            className="hover:bg-gray-50 cursor-pointer"
           >
+            <ListItemAvatar>
+              <Avatar src="/default-avatar.png" alt={conversation.name} />
+            </ListItemAvatar>
             <ListItemText
-              primary={conversation.user?.name || "Unknown User"}
-              secondary={conversation.lastMessage}
+              primary={
+                <Typography className="font-medium">
+                  {conversation.name || "Unknown User"}
+                </Typography>
+              }
+              secondary={
+                <>
+                  <Typography component="span" className="block truncate">
+                    {conversation.lastMessage || "No messages yet"}
+                  </Typography>
+                  <Typography
+                    component="span"
+                    className="block text-xs text-gray-500"
+                  >
+                    {formatDistanceToNow(new Date(conversation.timestamp), {
+                      addSuffix: true,
+                    })}
+                  </Typography>
+                </>
+              }
+              secondaryTypographyProps={{ component: "div" }}
             />
           </ListItem>
-        ))}
-      </List>
-    </div>
+        ))
+      ) : (
+        <Box className="p-4 text-center">
+          <Typography variant="body1" className="text-gray-500">
+            No conversations yet
+          </Typography>
+        </Box>
+      )}
+    </List>
   );
 };
 

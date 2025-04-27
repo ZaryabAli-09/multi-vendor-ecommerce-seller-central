@@ -1,25 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
 import ConversationList from "./ConversationList";
 import ChatInterface from "./ChatInterface";
-import { useSelector } from "react-redux";
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+
 const Chat = () => {
-  const [selectedUser, setSelectedUser] = useState(null);
   const { user } = useSelector((state) => state.auth);
+  const sellerId = user?._id;
+  const [selectedBuyer, setSelectedBuyer] = useState(null);
+  const [conversations, setConversations] = useState([]);
+
+  // Fetch conversations for the seller
+  const fetchConversations = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/chat/conversations?userId=${sellerId}`,
+        { credentials: "include" }
+      );
+      const data = await response.json();
+
+      if (!response.ok)
+        throw new Error(data.message || "Failed to fetch conversations");
+      console.log(data);
+      setConversations(Array.isArray(data) ? data : []);
+    } catch (error) {
+      toast.error(error.message);
+      setConversations([]);
+    }
+  };
+
+  useEffect(() => {
+    if (sellerId) fetchConversations();
+  }, [sellerId]);
 
   return (
-    <div className="flex h-screen">
-      <ConversationList userId={user._id} onSelectUser={setSelectedUser} />
-      <div className="flex-1 p-4">
-        {selectedUser ? (
-          <ChatInterface userId={user._id} receiverId={selectedUser} />
-        ) : (
-          <Typography variant="h6" className="text-center mt-8">
-            Select a user to start chatting
+    <Box className="flex h-screen bg-gray-50">
+      {/* Conversation List - Always visible on desktop, conditionally on mobile */}
+      <Box
+        className={`w-full md:w-1/3 lg:w-1/4 bg-white border-r border-gray-200 ${
+          selectedBuyer ? "hidden md:block" : "block"
+        }`}
+      >
+        <Box className="p-4 border-b border-gray-200">
+          <Typography variant="h6" className="font-semibold">
+            Messages
           </Typography>
+        </Box>
+        <ConversationList
+          conversations={conversations}
+          onSelectBuyer={(buyer) => {
+            setSelectedBuyer(buyer);
+          }}
+        />
+      </Box>
+
+      {/* Chat Interface - Conditionally rendered */}
+      <Box
+        className={`flex-1 flex flex-col ${
+          selectedBuyer ? "block" : "hidden md:flex"
+        }`}
+      >
+        {selectedBuyer ? (
+          <ChatInterface
+            sellerId={sellerId}
+            buyer={selectedBuyer}
+            onBack={() => setSelectedBuyer(null)}
+          />
+        ) : (
+          <Box className="hidden md:flex flex-1 items-center justify-center bg-gray-50">
+            <Typography variant="h6" className="text-gray-500">
+              Select a conversation to start chatting
+            </Typography>
+          </Box>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 
