@@ -70,8 +70,8 @@ const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
   { label: "Billing", path: "/dashboard?tab=billing", icon: <HiOutlineCog /> },
 
   {
-    label: "Help & Support",
-    path: "/support",
+    label: "Support & Disputes",
+    path: "/dashboard?tab=support",
     icon: <HiOutlineQuestionMarkCircle />,
   },
 ];
