@@ -152,7 +152,7 @@ const ProductEditModal = ({
       const invalidVariant = variants.some((variant) => {
         return (
           !variant.stock ||
-          variant.stock === 0 ||
+          variant.stock < 0 ||
           variant.discountedPrice < 0 ||
           !variant.price ||
           variant.price <= 0
