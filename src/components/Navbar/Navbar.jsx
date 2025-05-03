@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { AiFillProfile, AiOutlineLogout } from "react-icons/ai";
+import { AiOutlineLogout, AiOutlineMail } from "react-icons/ai";
 import {
-  Button,
   Menu,
   MenuItem,
   CircularProgress,
   IconButton,
   Avatar,
+  Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,9 +15,12 @@ import { logout } from "../../store/authReducers";
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.auth);
+
+  const { loading, user } = useSelector((state) => state.auth);
+  const userEmail = user?.email || "";
+  const userLogo = user?.logo?.url;
+  const userInitial = userEmail.charAt(0).toUpperCase();
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -33,16 +36,31 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white border-b px-4 py-2 flex justify-end items-center">
-      <div>
+    <nav className="border-b border-stone-400 w-full px-6 py-3 flex justify-between items-center ">
+      {/* User Email */}
+
+      <div className="flex items-center justify-center gap-2 bg-stone-600 p-1 rounded-lg">
+        <p className="text-white font-semibold text-xs">Welcome</p>
+        {/* <AiOutlineMail className="text-white" />{" "} */}
+        <p variant="subtitle1" className="text-white font-semibold text-xs ">
+          {userEmail}
+        </p>
+      </div>
+
+      {/* Profile Section */}
+      <div className="flex items-center">
         {/* Profile Icon Button */}
         <IconButton
           onClick={handleMenuOpen}
-          className="h-10 w-10 rounded-full"
+          className="h-10 w-10 rounded-full bg-purple-700 hover:bg-purple-800 text-white"
           aria-controls="profile-menu"
           aria-haspopup="true"
         >
-          <Avatar className="text-2xl " />
+          {userLogo ? (
+            <Avatar src={userLogo} className="h-8 w-8" />
+          ) : (
+            <span className="text-lg font-semibold">{userInitial}</span>
+          )}
         </IconButton>
 
         {/* Dropdown Menu */}
@@ -51,9 +69,9 @@ const Navbar = () => {
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
-          className="mt-2"
+          className="mt-1"
           PaperProps={{
-            className: "w-48 rounded-lg shadow-lg",
+            className: "w-56 rounded-lg shadow-lg",
           }}
           transformOrigin={{
             vertical: "top",
@@ -63,11 +81,6 @@ const Navbar = () => {
             vertical: "bottom",
             horizontal: "right",
           }}
-          TransitionProps={{
-            timeout: 150,
-            enter: true,
-            exit: true,
-          }}
         >
           {/* Profile Link */}
           <MenuItem
@@ -75,7 +88,7 @@ const Navbar = () => {
               navigate("/dashboard?tab=profile");
               handleMenuClose();
             }}
-            className="text-gray-700 hover:bg-gray-100"
+            className="text-gray-700 hover:bg-gray-100 px-4 py-2"
           >
             Profile
           </MenuItem>
@@ -83,7 +96,7 @@ const Navbar = () => {
           {/* Logout Button */}
           <MenuItem
             onClick={handleLogout}
-            className="text-gray-700 hover:bg-gray-100"
+            className="text-gray-700 hover:bg-gray-100 px-4 py-2"
             disabled={loading}
           >
             {loading ? (

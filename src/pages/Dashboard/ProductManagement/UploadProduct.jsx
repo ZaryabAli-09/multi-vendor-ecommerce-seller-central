@@ -103,7 +103,6 @@ const CreateProduct = () => {
         throw new Error(result.message);
       } else {
         setAllCategories(result.data);
-        toast.success(result.message);
       }
     } catch (error) {
       toast.error(error.message);

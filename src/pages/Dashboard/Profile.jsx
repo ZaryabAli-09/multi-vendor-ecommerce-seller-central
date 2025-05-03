@@ -193,7 +193,6 @@ const Profile = () => {
         setValue("socialLinks.facebook", result.data.socialLinks?.facebook);
         setValue("socialLinks.twitter", result.data.socialLinks?.twitter);
         setValue("socialLinks.linkedin", result.data.socialLinks?.linkedin);
-        toast.success(result.message);
       }
     } catch (error) {
       toast.error(error.message);
@@ -339,7 +338,7 @@ const Profile = () => {
             {/* Edit Profile Button */}
             <div className="w-full flex justify-end">
               <Button
-                className="font-semibold"
+                className="font-semibold  text-white "
                 size="small"
                 onClick={() => setOpen(true)}
                 variant="contained"

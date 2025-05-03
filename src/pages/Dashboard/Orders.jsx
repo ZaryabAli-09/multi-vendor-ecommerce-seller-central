@@ -152,6 +152,7 @@ const Orders = () => {
     <>
       {/* Sticky Filter Section */}
       <Box
+        className="rounded"
         sx={{
           position: "sticky",
           top: 0,
@@ -219,8 +220,8 @@ const Orders = () => {
       <TableContainer className="p-4" component={Paper}>
         <h2 className="text-xl md:text-2xl mb-6">Manage your orders</h2>
 
-        <Table>
-          <TableHead>
+        <Table className="w-full border" aria-label="simple table">
+          <TableHead className="bg-gray-100">
             <TableRow>
               <TableCell>#</TableCell>
               <TableCell>Order ID</TableCell>
@@ -250,6 +251,9 @@ const Orders = () => {
                   </TableCell>
                   <TableCell>
                     <Skeleton variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="rectangular" width={100} height={40} />
                   </TableCell>
                   <TableCell>
                     <Skeleton variant="rectangular" width={100} height={40} />
@@ -309,7 +313,7 @@ const Orders = () => {
             count={totalPages}
             page={currentPage}
             onChange={handlePageChange}
-            color="primary"
+            color="standard"
           />
         </Box>
       )}

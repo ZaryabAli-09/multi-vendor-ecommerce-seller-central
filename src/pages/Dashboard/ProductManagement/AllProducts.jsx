@@ -143,6 +143,7 @@ const AllProducts = () => {
     <>
       {/* Sticky Filter Section */}
       <Box
+        className="rounded"
         sx={{
           position: "sticky",
           top: 0,
@@ -207,8 +208,8 @@ const AllProducts = () => {
       <TableContainer className="p-4" component={Paper}>
         <h2 className="text-xl md:text-2xl mb-6">Manage your products</h2>
 
-        <Table>
-          <TableHead>
+        <Table className="w-full border" aria-label="simple table">
+          <TableHead className="bg-gray-100">
             <TableRow>
               <TableCell>#</TableCell>
               <TableCell>Image</TableCell>
@@ -323,7 +324,7 @@ const AllProducts = () => {
             count={totalPages}
             page={currentPage}
             onChange={handlePageChange}
-            color="primary"
+            color="standard"
           />
         </Box>
       )}

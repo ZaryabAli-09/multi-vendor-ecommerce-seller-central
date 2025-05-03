@@ -67,7 +67,7 @@ export default function Settings() {
   };
 
   return (
-    <Box className="max-w-3xl mx-auto p-6 bg-secondary rounded-md shadow-md">
+    <Box className="max-w-3xl mt-32 mx-auto p-6 bg-secondary rounded-md shadow-md">
       <h2 className="text-xl md:text-2xl text-center mb-6 font-bold text-dark">
         Account Settings{" "}
       </h2>

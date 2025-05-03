@@ -10,16 +10,21 @@ import {
   ListItemText,
   Box,
   CircularProgress,
+  Typography,
 } from "@mui/material";
 import {
-  HiOutlineMenu,
-  HiOutlineLogout,
-  HiOutlineCog,
-  HiOutlineQuestionMarkCircle,
+  HiOutlineHome,
+  HiOutlineUser,
+  HiOutlineUpload,
+  HiOutlineShoppingBag,
   HiOutlineShoppingCart,
-  HiOutlineCube,
-  HiOutlineViewGrid,
-  HiChat,
+  HiOutlineStar,
+  HiOutlineChat,
+  HiOutlineCog,
+  HiOutlineCreditCard,
+  HiOutlineSupport,
+  HiOutlineLogout,
+  HiOutlineMenu,
 } from "react-icons/hi";
 import { FcBullish } from "react-icons/fc";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,61 +32,66 @@ import { logout } from "../../store/authReducers";
 
 const DASHBOARD_SIDEBAR_LINKS = [
   {
-    label: "Overview",
+    label: "Store Insights",
     path: "/dashboard?tab=overview",
-    icon: <HiOutlineViewGrid />,
+    icon: <HiOutlineHome size={20} />,
   },
-  { label: "Profile", path: "/dashboard?tab=profile", icon: <HiOutlineCube /> },
+  {
+    label: "Profile",
+    path: "/dashboard?tab=profile",
+    icon: <HiOutlineUser size={20} />,
+  },
   {
     label: "Upload Product",
     path: "/dashboard?tab=upload-product",
-    icon: <HiOutlineCube />,
+    icon: <HiOutlineUpload size={20} />,
   },
   {
     label: "Products",
     path: "/dashboard?tab=products",
-    icon: <HiOutlineCube />,
+    icon: <HiOutlineShoppingBag size={20} />,
   },
   {
     label: "Orders",
     path: "/dashboard?tab=orders",
-    icon: <HiOutlineShoppingCart />,
+    icon: <HiOutlineShoppingCart size={20} />,
   },
   {
     label: "Reviews",
     path: "/dashboard?tab=reviews",
-    icon: <HiOutlineShoppingCart />,
+    icon: <HiOutlineStar size={20} />,
   },
 ];
 
 const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
   {
-    label: "Chats",
+    label: "Messages",
     path: "/dashboard?tab=chat",
-    icon: <HiChat />,
+    icon: <HiOutlineChat size={20} />,
   },
-
   {
     label: "Settings",
     path: "/dashboard?tab=settings",
-    icon: <HiOutlineCog />,
+    icon: <HiOutlineCog size={20} />,
   },
-
-  { label: "Billing", path: "/dashboard?tab=billing", icon: <HiOutlineCog /> },
-
   {
-    label: "Support & Disputes",
+    label: "Billing",
+    path: "/dashboard?tab=billing",
+    icon: <HiOutlineCreditCard size={20} />,
+  },
+  {
+    label: "Support",
     path: "/dashboard?tab=support",
-    icon: <HiOutlineQuestionMarkCircle />,
+    icon: <HiOutlineSupport size={20} />,
   },
 ];
 
 const Sidebar = ({ activeTab }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { loading } = useSelector((state) => state.auth);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const handleLogout = async () => {
     dispatch(logout());
     navigate("/login");
@@ -90,53 +100,81 @@ const Sidebar = ({ activeTab }) => {
   const toggleDrawer = () => {
     setMobileOpen(!mobileOpen);
   };
-
+  console.log(activeTab);
   const sidebarContent = (
-    <Box className="w-60 bg-secondary text-primary-base h-full p-4 flex flex-col">
-      <div className="flex items-center gap-2 mb-6">
-        <FcBullish fontSize={24} />
-        <span className="font-bold text-sm">LOGO SELLER CENTRAL</span>
+    <Box className="w-72 bg-stone-300 border-r border-stone-400 shadow-md text-black h-full p-4 flex flex-col">
+      <div className="flex items-center gap-2 ml-2 mb-8 pt-2 ">
+        <div className="!font-extrabold text-xl text-stone-800">
+          LOGO{" "}
+          <span className="p-1 bg-stone-800 font-thin !text-lg text-white rounded  ">
+            Seller Central
+          </span>{" "}
+        </div>
       </div>
       <List>
         {DASHBOARD_SIDEBAR_LINKS.map((link) => (
-          <ListItem key={link.label} disablePadding>
+          <ListItem key={link.label} disablePadding className="mb-1 ">
             <ListItemButton
               component={Link}
               to={link.path}
-              className={`rounded ${
-                activeTab === link.path ? "bg-gray-300" : "hover:bg-primary"
+              className={` !rounded-lg ${
+                activeTab === link.path
+                  ? "!bg-stone-700 !text-white"
+                  : "hover:!bg-stone-600"
               }`}
             >
-              <ListItemIcon>{link.icon}</ListItemIcon>
-              <ListItemText primary={link.label} />
+              <ListItemIcon
+                className={` !rounded-lg ${
+                  activeTab === link.path
+                    ? "!bg-stone-700 !text-white"
+                    : "hover:!bg-stone-600"
+                }`}
+              >
+                {link.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={link.label}
+                primaryTypographyProps={{ fontSize: "0.95rem" }}
+              />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
-      <List className="mt-auto border-t pt-2">
+      <List className="mt-auto border-t border-stone-400 pt-2">
         {DASHBOARD_SIDEBAR_BOTTOM_LINKS.map((link) => (
-          <ListItem key={link.label} disablePadding>
+          <ListItem key={link.label} disablePadding className="mb-1">
             <ListItemButton
               component={Link}
               to={link.path}
-              className={`rounded ${
-                activeTab === link.path ? "bg-gray-300" : "hover:bg-primary"
+              className={`rounded-lg ${
+                activeTab === link.path
+                  ? "bg-purple-700 text-white"
+                  : "hover:bg-purple-600"
               }`}
             >
-              <ListItemIcon>{link.icon}</ListItemIcon>
-              <ListItemText primary={link.label} />
+              <ListItemIcon className="text-white">{link.icon}</ListItemIcon>
+              <ListItemText
+                primary={link.label}
+                primaryTypographyProps={{ fontSize: "0.95rem" }}
+              />
             </ListItemButton>
           </ListItem>
         ))}
-        <ListItem disablePadding>
-          <ListItemButton className="text-red-500 hover:bg-primary rounded">
-            <ListItemIcon>
-              <HiOutlineLogout />
+        <ListItem disablePadding className="mb-1">
+          <ListItemButton
+            onClick={handleLogout}
+            className="rounded-lg hover:bg-purple-600"
+          >
+            <ListItemIcon className="text-white">
+              <HiOutlineLogout size={20} />
             </ListItemIcon>
             {loading ? (
-              <CircularProgress size={24} />
+              <CircularProgress size={20} color="inherit" />
             ) : (
-              <ListItemText onClick={handleLogout} primary="Logout" />
+              <ListItemText
+                primary="Logout"
+                primaryTypographyProps={{ fontSize: "0.95rem" }}
+              />
             )}
           </ListItemButton>
         </ListItem>
@@ -147,14 +185,14 @@ const Sidebar = ({ activeTab }) => {
   return (
     <>
       {/* Mobile Menu Button */}
-      <div className="md:hidden p-2 border">
-        <IconButton onClick={toggleDrawer}>
-          <HiOutlineMenu className="text-black" />
+      <div className="md:hidden p-2 bg-stone-300">
+        <IconButton onClick={toggleDrawer} className="text-white">
+          <HiOutlineMenu size={24} />
         </IconButton>
       </div>
 
       {/* Sidebar for Desktop */}
-      <div className="hidden md:flex border-r w-64 fixed overflow-y-auto bg-secondary h-full">
+      <div className="hidden md:flex w-64 fixed overflow-y-auto h-full">
         {sidebarContent}
       </div>
 

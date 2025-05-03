@@ -166,6 +166,7 @@ const Reviews = () => {
     <div>
       {/* Sticky Filter Section */}
       <Box
+        className="rounded"
         sx={{
           position: "sticky",
           top: 0,
@@ -237,13 +238,41 @@ const Reviews = () => {
 
           <TableBody>
             {isFetching ? (
-              <TableRow>
-                {[...Array(4)].map((_, index) => (
-                  <TableCell key={index}>
-                    <Skeleton variant="text" />
+              // Skeleton Loading
+              Array.from({ length: limit }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Skeleton variant="text" animation="wave" />
                   </TableCell>
-                ))}
-              </TableRow>
+
+                  <TableCell>
+                    <Skeleton variant="text" animation="wave" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" animation="wave" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" animation="wave" />
+                  </TableCell>
+
+                  <TableCell>
+                    <Skeleton
+                      animation="wave"
+                      variant="rectangular"
+                      width={100}
+                      height={30}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      variant="rectangular"
+                      animation="wave"
+                      width={100}
+                      height={30}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))
             ) : noReviewsMessage ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center">

@@ -6,6 +6,9 @@ import {
   Grid,
   CircularProgress,
   Alert,
+  Avatar,
+  Chip,
+  useTheme,
 } from "@mui/material";
 import {
   BarChart,
@@ -15,23 +18,48 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  LineChart,
-  Line,
   PieChart,
   Pie,
   Cell,
   ResponsiveContainer,
+  AreaChart,
+  Area,
+  ComposedChart,
+  Line,
 } from "recharts";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF"];
+const COLORS = [
+  "#0088FE",
+  "#00C49F",
+  "#FFBB28",
+  "#FF8042",
+  "#AF19FF",
+  "#FF4560",
+];
+import {
+  FaMoneyBillWave,
+  FaShoppingCart,
+  FaBoxOpen,
+  FaUsers,
+  FaChartLine,
+} from "react-icons/fa";
 
+// Custom color palette
+const cardColors = [
+  "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", // Purple gradient
+  "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)", // Green gradient
+  "linear-gradient(135deg, #ff7b25 0%, #ff6b6b 100%)", // Orange gradient
+  "linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%)", // Blue gradient
+  "linear-gradient(135deg, #f857a6 0%, #ff5858 100%)", // Pink gradient
+];
 const SellerDashboard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const theme = useTheme();
+  console.log(data);
 
   useEffect(() => {
-    // Fetch data from the backend
     const fetchData = async () => {
       try {
         const response = await fetch(
@@ -39,11 +67,8 @@ const SellerDashboard = () => {
             import.meta.env.VITE_API_URL
           }/seller/dashboard-information/674a1d35b7c4360c86e36baa`
         );
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
+        if (!response.ok) throw new Error("Failed to fetch data");
         const result = await response.json();
-        console.log(result);
         setData(result);
       } catch (err) {
         setError(err.message);
@@ -51,263 +76,326 @@ const SellerDashboard = () => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
-  if (loading) {
+  if (loading)
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mt: 4,
+        }}
+      >
         <CircularProgress />
       </Box>
     );
-  }
-
-  if (error) {
+  if (error)
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
         <Alert severity="error">{error}</Alert>
       </Box>
     );
-  }
-
-  if (!data) {
+  if (!data)
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
         <Alert severity="info">No data available</Alert>
       </Box>
     );
-  }
 
   return (
-    <Box sx={{ flexGrow: 1, padding: 3, backgroundColor: "#f5f5f5" }}>
-      <Typography
-        variant="h4"
-        gutterBottom
-        sx={{ fontWeight: "bold", color: "#333" }}
-      >
+    <Box sx={{ flexGrow: 1, p: 3 }}>
+      <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
         Seller Dashboard
       </Typography>
 
-      {/* Key Metrics Cards */}
-      <Grid container spacing={3} sx={{ marginBottom: 4 }}>
+      {/* Enhanced Top Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
         {[
           {
             title: "Total Revenue",
-            value: `$${data.totalSellerSales}`,
-            color: "#0088FE",
+            value: `Rs. ${data.totalSellerSales.toLocaleString()}`,
+            icon: <FaMoneyBillWave size={24} />,
+            color: cardColors[0],
           },
           {
-            title: "Average Order Value",
-            value: `$${(data.totalSellerSales / data.totalSellerOrders).toFixed(
-              2
-            )}`,
-            color: "#00C49F",
+            title: "Avg Order Value",
+            value: `Rs. ${data.avgOrderValue.toFixed(0)}`,
+            icon: <FaChartLine size={24} />,
+            color: cardColors[1],
           },
           {
             title: "Total Orders",
             value: data.totalSellerOrders,
-            color: "#FFBB28",
+            icon: <FaShoppingCart size={24} />,
+            color: cardColors[2],
           },
           {
             title: "Total Products",
             value: data.totalSellerProduct,
-            color: "#FF8042",
+            icon: <FaBoxOpen size={24} />,
+            color: cardColors[3],
           },
           {
             title: "Total Customers",
             value: data.totalSellerCustomers,
-            color: "#AF19FF",
+            icon: <FaUsers size={24} />,
+            color: cardColors[4],
           },
-        ].map((metric, index) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+        ].map((card, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={2.4} key={index}>
             <Paper
               sx={{
-                padding: 3,
-                textAlign: "center",
-                backgroundColor: metric.color,
-                color: "#fff",
-                borderRadius: 2,
-                boxShadow: 3,
-                height: "100%", // Ensure all cards have the same height
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
+                p: 3,
+                borderRadius: 3,
+                height: "100%",
+                background: card.color,
+                color: "white",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                transition: "transform 0.3s ease",
+                "&:hover": {
+                  transform: "translateY(-5px)",
+                },
               }}
             >
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                {metric.title}
-              </Typography>
-              <Typography variant="h4" sx={{ mt: 1 }}>
-                {metric.value}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
+                <Box
+                  sx={{
+                    backgroundColor: "rgba(255,255,255,0.2)",
+                    borderRadius: "50%",
+                    width: 48,
+                    height: 48,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    mr: 2,
+                  }}
+                >
+                  {card.icon}
+                </Box>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                  }}
+                >
+                  {card.title}
+                </Typography>
+              </Box>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 700,
+                  textAlign: "right",
+                }}
+              >
+                {card.value}
               </Typography>
             </Paper>
           </Grid>
         ))}
       </Grid>
 
-      {/* Sales Overview */}
-      <Typography
-        variant="h5"
-        gutterBottom
-        sx={{ marginTop: 3, fontWeight: "bold", color: "#333" }}
-      >
-        Sales Overview
+      {/* Enhanced Sales Overview (now bar chart) */}
+      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
+        Monthly Sales
       </Typography>
-      <Paper
-        sx={{ padding: 2, marginBottom: 4, borderRadius: 2, boxShadow: 3 }}
-      >
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data.salesDataArray}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+      <Paper sx={{ p: 2, mb: 4, borderRadius: 3, boxShadow: 3 }}>
+        <ResponsiveContainer width="100%" height={350}>
+          <ComposedChart data={data.monthlySalesData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+            <XAxis dataKey="month" />
             <YAxis />
-            <Tooltip />
+            <Tooltip
+              formatter={(value) => [
+                `Rs. ${value.toLocaleString()}`,
+                "Revenue",
+              ]}
+            />
             <Legend />
-            <Line type="monotone" dataKey="sales" stroke="#8884d8" />
-          </LineChart>
+            <Bar
+              dataKey="sales"
+              name="Monthly Sales"
+              fill="#8884d8"
+              radius={[4, 4, 0, 0]}
+            />
+            <Line
+              type="monotone"
+              dataKey="revenue"
+              name="Trend"
+              stroke="#ff7300"
+            />
+          </ComposedChart>
         </ResponsiveContainer>
       </Paper>
 
-      {/* Product Performance */}
-      <Typography
-        variant="h5"
-        gutterBottom
-        sx={{ marginTop: 3, fontWeight: "bold", color: "#333" }}
-      >
+      {/* Top Selling Products (new horizontal bar chart) */}
+      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
         Top Selling Products
       </Typography>
-      <Paper
-        sx={{ padding: 2, marginBottom: 4, borderRadius: 2, boxShadow: 3 }}
-      >
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data.productDataArray}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="sales" fill="#8884d8" />
+      <Paper sx={{ p: 2, mb: 4, borderRadius: 3, boxShadow: 3 }}>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart
+            data={data.topSellingProducts}
+            layout="vertical"
+            margin={{ left: 100, right: 20 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+            <XAxis type="number" />
+            <YAxis
+              dataKey="name"
+              type="category"
+              width={150}
+              tick={{ fontSize: 12 }}
+            />
+            <Tooltip
+              formatter={(value, name) =>
+                name === "Sold"
+                  ? [value, "Units Sold"]
+                  : [`Rs. ${value}`, "Revenue"]
+              }
+            />
+            <Bar
+              dataKey="sold"
+              name="Sold"
+              fill="#82ca9d"
+              radius={[0, 4, 4, 0]}
+            />
+            <Bar
+              dataKey="revenue"
+              name="Revenue"
+              fill="#8884d8"
+              radius={[0, 4, 4, 0]}
+            />
           </BarChart>
         </ResponsiveContainer>
       </Paper>
 
-      {/* Customer Insights */}
-      <Typography
-        variant="h5"
-        gutterBottom
-        sx={{ marginTop: 3, fontWeight: "bold", color: "#333" }}
-      >
-        Product Category Insights
+      {/* Category Insights (unchanged as requested) */}
+      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
+        Category Insights
       </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" }, // Stack vertically on small screens, side by side on medium and larger screens
-          gap: 4, // Add spacing between the two charts
-          marginBottom: 4,
-        }}
-      >
-        {/* Product Sales Category Demographics */}
-        <Paper
-          sx={{
-            padding: 2,
-            borderRadius: 2,
-            boxShadow: 3,
-            flex: 1, // Take up equal space
-          }}
-        >
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{ fontWeight: "bold", color: "#333", textAlign: "center" }}
-          >
-            Sales by Product Category
-          </Typography>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={data.productCategoryDataArray}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                label={false} // Disable labels
-              >
-                {data.productCategoryDataArray.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </Paper>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2, borderRadius: 3, boxShadow: 3, height: "100%" }}>
+            <Typography variant="h6" sx={{ textAlign: "center", mb: 2 }}>
+              Sales by Category
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={data.productCategoryData}
+                  dataKey="quantity"
+                  nameKey="category"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fontSize={9}
+                  label={({ category, percent }) =>
+                    `${category} ${(percent * 100).toFixed(0)}%`
+                  }
+                >
+                  {data.productCategoryData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value) => [`${value} units`, "Quantity"]}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2, borderRadius: 3, boxShadow: 3, height: "100%" }}>
+            <Typography variant="h6" sx={{ textAlign: "center", mb: 2 }}>
+              Product Distribution
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={data.productDistributionData}
+                  dataKey="count"
+                  nameKey="category"
+                  cx="50%"
+                  cy="50%"
+                  fontSize={9}
+                  outerRadius={80}
+                  label={({ category, percent }) =>
+                    `${category} ${(percent * 100).toFixed(0)}%`
+                  }
+                >
+                  {data.productDistributionData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value) => [`${value} products`, "Count"]}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+      </Grid>
 
-        {/* Total Product Category Demographics */}
-        <Paper
-          sx={{
-            padding: 2,
-            borderRadius: 2,
-            boxShadow: 3,
-            flex: 1, // Take up equal space
-          }}
-        >
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{ fontWeight: "bold", color: "#333", textAlign: "center" }}
-          >
-            Product Distribution by Category
-          </Typography>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={data.totalSellerProductCategories}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                label={false} // Disable labels
-              >
-                {data.totalSellerProductCategories.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </Paper>
-      </Box>
-
-      {/* Order Status */}
-      <Typography
-        variant="h5"
-        gutterBottom
-        sx={{ marginTop: 3, fontWeight: "bold", color: "#333" }}
-      >
+      {/* Enhanced Order Status */}
+      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
         Order Status
       </Typography>
-      <Paper
-        sx={{ padding: 2, marginBottom: 4, borderRadius: 2, boxShadow: 3 }}
-      >
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data.orderStatusDataArray}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="value" fill="#8884d8" />
+      <Paper sx={{ p: 2, mb: 4, borderRadius: 3, boxShadow: 3 }}>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart
+            data={data?.orderStatusData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" />
+            <XAxis dataKey="status" tick={{ fontSize: 12 }} />
+            <YAxis
+              tick={{ fontSize: 12 }}
+              label={{
+                value: "Order Count",
+                angle: -90,
+                position: "insideLeft",
+                fontSize: 12,
+              }}
+            />
+            <Tooltip
+              formatter={(value) => [value, "Orders"]}
+              contentStyle={{
+                borderRadius: 8,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                border: "none",
+              }}
+            />
+            <Bar dataKey="count">
+              {data?.orderStatusData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={
+                    [
+                      "#4CAF50", // Delivered - green
+                      "#2196F3", // Shipped - blue
+                      "#FFC107", // Pending - amber
+                      "#FF0000", // Other statuses - gray
+                    ][index % 4]
+                  }
+                />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </Paper>
