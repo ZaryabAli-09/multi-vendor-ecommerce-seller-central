@@ -39,7 +39,7 @@ const Navbar = () => {
     <nav className="border-b border-stone-400 w-full px-6 py-3 flex justify-between items-center ">
       {/* User Email */}
 
-      <div className="flex items-center justify-center gap-2 bg-stone-600 p-1 rounded-lg">
+      <div className="flex items-center justify-center gap-2 bg-black animate-pulse p-1 rounded-lg">
         <p className="text-white font-semibold text-xs">Welcome</p>
         {/* <AiOutlineMail className="text-white" />{" "} */}
         <p variant="subtitle1" className="text-white font-semibold text-xs ">

@@ -38,7 +38,7 @@ const DashboardHome = () => {
       />
 
       {/* Content Area */}
-      <div className="flex flex-col w-full md:ml-[256px] bg-stone-200   overflow-auto">
+      <div className="flex flex-col w-full md:ml-[256px] bg-stone-100   overflow-auto">
         <Navbar />
         <div className="p-4">
           {tab === "upload-product" && <UploadProduct />}

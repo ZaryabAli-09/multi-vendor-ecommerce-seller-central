@@ -43,6 +43,8 @@ import {
   FaUsers,
   FaChartLine,
 } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 // Custom color palette
 const cardColors = [
@@ -57,20 +59,23 @@ const SellerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const theme = useTheme();
-  console.log(data);
-
+  const { user } = useSelector((state) => state.auth);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${
-            import.meta.env.VITE_API_URL
-          }/seller/dashboard-information/674a1d35b7c4360c86e36baa`
+          `${import.meta.env.VITE_API_URL}/seller/dashboard-information/${
+            user._id
+          }`,
+          {
+            credentials: "include",
+          }
         );
         if (!response.ok) throw new Error("Failed to fetch data");
         const result = await response.json();
         setData(result);
       } catch (err) {
+        toast.error(error.message);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -103,6 +108,21 @@ const SellerDashboard = () => {
         <Alert severity="info">No data available</Alert>
       </Box>
     );
+  const renderNoDataMessage = (message = "No data available") => (
+    <Box
+      sx={{
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: 300,
+      }}
+    >
+      <Typography variant="body1" color="textSecondary">
+        {message}
+      </Typography>
+    </Box>
+  );
 
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
@@ -209,32 +229,39 @@ const SellerDashboard = () => {
         Monthly Sales
       </Typography>
       <Paper sx={{ p: 2, mb: 4, borderRadius: 3, boxShadow: 3 }}>
-        <ResponsiveContainer width="100%" height={350}>
-          <ComposedChart data={data.monthlySalesData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip
-              formatter={(value) => [
-                `Rs. ${value.toLocaleString()}`,
-                "Revenue",
-              ]}
-            />
-            <Legend />
-            <Bar
-              dataKey="sales"
-              name="Monthly Sales"
-              fill="#8884d8"
-              radius={[4, 4, 0, 0]}
-            />
-            <Line
-              type="monotone"
-              dataKey="revenue"
-              name="Trend"
-              stroke="#ff7300"
-            />
-          </ComposedChart>
-        </ResponsiveContainer>
+        {data.monthlySalesData.length === 0 ||
+        data.monthlySalesData === undefined ||
+        data.monthlySalesData === null ||
+        !data.monthlySalesData ? (
+          renderNoDataMessage("No sales data available!")
+        ) : (
+          <ResponsiveContainer width="100%" height={350}>
+            <ComposedChart data={data.monthlySalesData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip
+                formatter={(value) => [
+                  `Rs. ${value.toLocaleString()}`,
+                  "Revenue",
+                ]}
+              />
+              <Legend />
+              <Bar
+                dataKey="sales"
+                name="Monthly Sales"
+                fill="#8884d8"
+                radius={[4, 4, 0, 0]}
+              />
+              <Line
+                type="monotone"
+                dataKey="revenue"
+                name="Trend"
+                stroke="#ff7300"
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+        )}
       </Paper>
 
       {/* Top Selling Products (new horizontal bar chart) */}
@@ -242,41 +269,48 @@ const SellerDashboard = () => {
         Top Selling Products
       </Typography>
       <Paper sx={{ p: 2, mb: 4, borderRadius: 3, boxShadow: 3 }}>
-        <ResponsiveContainer width="100%" height={400}>
-          <BarChart
-            data={data.topSellingProducts}
-            layout="vertical"
-            margin={{ left: 100, right: 20 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-            <XAxis type="number" />
-            <YAxis
-              dataKey="name"
-              type="category"
-              width={150}
-              tick={{ fontSize: 12 }}
-            />
-            <Tooltip
-              formatter={(value, name) =>
-                name === "Sold"
-                  ? [value, "Units Sold"]
-                  : [`Rs. ${value}`, "Revenue"]
-              }
-            />
-            <Bar
-              dataKey="sold"
-              name="Sold"
-              fill="#82ca9d"
-              radius={[0, 4, 4, 0]}
-            />
-            <Bar
-              dataKey="revenue"
-              name="Revenue"
-              fill="#8884d8"
-              radius={[0, 4, 4, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        {data.topSellingProducts.length === 0 ||
+        data.topSellingProducts === undefined ||
+        data.topSellingProducts === null ||
+        !data.topSellingProducts ? (
+          renderNoDataMessage("No top selling products available!")
+        ) : (
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart
+              data={data.topSellingProducts}
+              layout="vertical"
+              margin={{ left: 100, right: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis type="number" />
+              <YAxis
+                dataKey="name"
+                type="category"
+                width={150}
+                tick={{ fontSize: 12 }}
+              />
+              <Tooltip
+                formatter={(value, name) =>
+                  name === "Sold"
+                    ? [value, "Units Sold"]
+                    : [`Rs. ${value}`, "Revenue"]
+                }
+              />
+              <Bar
+                dataKey="sold"
+                name="Sold"
+                fill="#82ca9d"
+                radius={[0, 4, 4, 0]}
+              />
+              <Bar
+                dataKey="revenue"
+                name="Revenue"
+                fill="#8884d8"
+                radius={[0, 4, 4, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </Paper>
 
       {/* Category Insights (unchanged as requested) */}
@@ -289,32 +323,39 @@ const SellerDashboard = () => {
             <Typography variant="h6" sx={{ textAlign: "center", mb: 2 }}>
               Sales by Category
             </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={data.productCategoryData}
-                  dataKey="quantity"
-                  nameKey="category"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  fontSize={9}
-                  label={({ category, percent }) =>
-                    `${category} ${(percent * 100).toFixed(0)}%`
-                  }
-                >
-                  {data.productCategoryData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value) => [`${value} units`, "Quantity"]}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            {data.productCategoryData.length === 0 ||
+            data.productCategoryData === undefined ||
+            data.productCategoryData === null ||
+            !data.productCategoryData ? (
+              renderNoDataMessage("No category sales data available!")
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={data.productCategoryData}
+                    dataKey="quantity"
+                    nameKey="category"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fontSize={9}
+                    label={({ category, percent }) =>
+                      `${category} ${(percent * 100).toFixed(0)}%`
+                    }
+                  >
+                    {data.productCategoryData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value) => [`${value} units`, "Quantity"]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </Paper>
         </Grid>
         <Grid item xs={12} md={6}>
@@ -322,32 +363,39 @@ const SellerDashboard = () => {
             <Typography variant="h6" sx={{ textAlign: "center", mb: 2 }}>
               Product Distribution
             </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={data.productDistributionData}
-                  dataKey="count"
-                  nameKey="category"
-                  cx="50%"
-                  cy="50%"
-                  fontSize={9}
-                  outerRadius={80}
-                  label={({ category, percent }) =>
-                    `${category} ${(percent * 100).toFixed(0)}%`
-                  }
-                >
-                  {data.productDistributionData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value) => [`${value} products`, "Count"]}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            {data.productDistributionData.length === 0 ||
+            data.productDistributionData === undefined ||
+            data.productDistributionData === null ||
+            !data.productDistributionData ? (
+              renderNoDataMessage("No product distribution data available!")
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={data.productDistributionData}
+                    dataKey="count"
+                    nameKey="category"
+                    cx="50%"
+                    cy="50%"
+                    fontSize={9}
+                    outerRadius={80}
+                    label={({ category, percent }) =>
+                      `${category} ${(percent * 100).toFixed(0)}%`
+                    }
+                  >
+                    {data.productDistributionData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value) => [`${value} products`, "Count"]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </Paper>
         </Grid>
       </Grid>
@@ -357,47 +405,54 @@ const SellerDashboard = () => {
         Order Status
       </Typography>
       <Paper sx={{ p: 2, mb: 4, borderRadius: 3, boxShadow: 3 }}>
-        <ResponsiveContainer width="100%" height={400}>
-          <BarChart
-            data={data?.orderStatusData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" />
-            <XAxis dataKey="status" tick={{ fontSize: 12 }} />
-            <YAxis
-              tick={{ fontSize: 12 }}
-              label={{
-                value: "Order Count",
-                angle: -90,
-                position: "insideLeft",
-                fontSize: 12,
-              }}
-            />
-            <Tooltip
-              formatter={(value) => [value, "Orders"]}
-              contentStyle={{
-                borderRadius: 8,
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                border: "none",
-              }}
-            />
-            <Bar dataKey="count">
-              {data?.orderStatusData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={
-                    [
-                      "#4CAF50", // Delivered - green
-                      "#2196F3", // Shipped - blue
-                      "#FFC107", // Pending - amber
-                      "#FF0000", // Other statuses - gray
-                    ][index % 4]
-                  }
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+        {data.orderStatusData.length === 0 ||
+        data.orderStatusData === undefined ||
+        data.orderStatusData === null ||
+        !data.orderStatusData ? (
+          renderNoDataMessage("No order status data available!")
+        ) : (
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart
+              data={data?.orderStatusData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" />
+              <XAxis dataKey="status" tick={{ fontSize: 12 }} />
+              <YAxis
+                tick={{ fontSize: 12 }}
+                label={{
+                  value: "Order Count",
+                  angle: -90,
+                  position: "insideLeft",
+                  fontSize: 12,
+                }}
+              />
+              <Tooltip
+                formatter={(value) => [value, "Orders"]}
+                contentStyle={{
+                  borderRadius: 8,
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  border: "none",
+                }}
+              />
+              <Bar dataKey="count">
+                {data?.orderStatusData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={
+                      [
+                        "#4CAF50", // Delivered - green
+                        "#2196F3", // Shipped - blue
+                        "#FFC107", // Pending - amber
+                        "#FF0000", // Other statuses - gray
+                      ][index % 4]
+                    }
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </Paper>
     </Box>
   );

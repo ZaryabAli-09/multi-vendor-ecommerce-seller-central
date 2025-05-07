@@ -13,6 +13,7 @@ import DashboardHome from "./pages/Dashboard/DashboardHome";
 import Product from "./pages/Dashboard/ProductManagement/Product";
 import AuthenticatedRoutes from "./components/RoutesWrappers/AuthenticatedRoutes";
 import DummyOrder from "./pages/DummyOrder";
+import ProductDetail from "./pages/Dashboard/ProductManagement/Product";
 
 const App = () => {
   return (
@@ -34,7 +35,10 @@ const App = () => {
         {/* Dashboard Routes  */}
         <Route element={<AuthenticatedRoutes />}>
           <Route path="/dashboard" element={<DashboardHome />} />
-          <Route path="/dashboard/product/:productId" element={<Product />} />
+          <Route
+            path="/dashboard/product/:productId"
+            element={<ProductDetail />}
+          />
         </Route>
       </Routes>
     </>

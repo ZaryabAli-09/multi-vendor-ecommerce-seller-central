@@ -102,7 +102,7 @@ const Sidebar = ({ activeTab }) => {
   };
   console.log(activeTab);
   const sidebarContent = (
-    <Box className="w-72 bg-stone-300 border-r border-stone-400 shadow-md text-black h-full p-4 flex flex-col">
+    <Box className="w-72 bg-stone-200 border-r border-stone-400 shadow-md text-black h-full p-4 flex flex-col">
       <div className="flex items-center gap-2 ml-2 mb-8 pt-2 ">
         <div className="!font-extrabold text-xl text-stone-800">
           LOGO{" "}
@@ -119,15 +119,15 @@ const Sidebar = ({ activeTab }) => {
               to={link.path}
               className={` !rounded-lg ${
                 activeTab === link.path
-                  ? "!bg-stone-700 !text-white"
-                  : "hover:!bg-stone-600"
+                  ? "!bg-stone-400 !text-white"
+                  : "hover:!bg-stone-400"
               }`}
             >
               <ListItemIcon
                 className={` !rounded-lg ${
                   activeTab === link.path
-                    ? "!bg-stone-700 !text-white"
-                    : "hover:!bg-stone-600"
+                    ? "!bg-stone-400 !text-white"
+                    : "hover:!bg-stone-400"
                 }`}
               >
                 {link.icon}
@@ -142,17 +142,25 @@ const Sidebar = ({ activeTab }) => {
       </List>
       <List className="mt-auto border-t border-stone-400 pt-2">
         {DASHBOARD_SIDEBAR_BOTTOM_LINKS.map((link) => (
-          <ListItem key={link.label} disablePadding className="mb-1">
-            <ListItemButton
-              component={Link}
-              to={link.path}
-              className={`rounded-lg ${
-                activeTab === link.path
-                  ? "bg-purple-700 text-white"
-                  : "hover:bg-purple-600"
-              }`}
-            >
-              <ListItemIcon className="text-white">{link.icon}</ListItemIcon>
+          <ListItem
+            key={link.label}
+            className={`mb-1 !rounded-lg ${
+              activeTab === link.path
+                ? "!bg-stone-400 !text-white"
+                : "hover:!bg-stone-400"
+            }`}
+            disablePadding
+          >
+            <ListItemButton component={Link} to={link.path}>
+              <ListItemIcon
+                className={` !rounded-lg ${
+                  activeTab === link.path
+                    ? "!bg-stone-400 !text-white"
+                    : "hover:!bg-stone-400"
+                }`}
+              >
+                {link.icon}
+              </ListItemIcon>
               <ListItemText
                 primary={link.label}
                 primaryTypographyProps={{ fontSize: "0.95rem" }}
