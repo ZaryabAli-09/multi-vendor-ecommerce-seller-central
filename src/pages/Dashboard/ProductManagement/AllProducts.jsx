@@ -52,15 +52,14 @@ const AllProducts = () => {
       }).toString();
 
       const res = await fetch(
-        `${
-          import.meta.env.VITE_API_URL
-        }/product/seller-products?${queryParams}`,
+        `${import.meta.env.VITE_API_URL}/product/seller-products/${
+          user?._id
+        }?${queryParams}`,
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include",
         }
       );
       const result = await res.json();
