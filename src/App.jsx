@@ -1,6 +1,5 @@
-import { Routes, Route } from "react-router-dom";
-
 import React from "react";
+import { Routes, Route } from "react-router-dom";
 import Register from "./pages/Auth/Register";
 import Login from "./pages/Auth/Login";
 
@@ -10,14 +9,11 @@ import BrandRegistrationSuccessPage from "./pages/Auth/BrandRegistartionSuccessM
 import ForgotPassword from "./pages/Auth/ForgotPassword";
 import ResetPassword from "./pages/Auth/ResetPassword";
 import DashboardHome from "./pages/Dashboard/DashboardHome";
-import Product from "./pages/Dashboard/ProductManagement/Product";
 import AuthenticatedRoutes from "./components/RoutesWrappers/AuthenticatedRoutes";
 import DummyOrder from "./pages/DummyOrder";
 import ProductDetail from "./pages/Dashboard/ProductManagement/Product";
 import CategoryNavigation from "./categories/CategoryNavigation";
 import ProductList from "./categories/ProductList";
-import ProductSearch from "./categories/ProductSearch";
-import Pagination from "./categories/Pagination";
 
 const App = () => {
   return (
@@ -40,8 +36,6 @@ const App = () => {
           path="/products/:category/:subcategory?/:subsubcategory?"
           element={<ProductList />}
         />
-        <Route path="/products-search" element={<ProductSearch />} />
-        <Route path="/pagination" element={<Pagination />} />
 
         {/* Dashboard Routes  */}
         <Route element={<AuthenticatedRoutes />}>

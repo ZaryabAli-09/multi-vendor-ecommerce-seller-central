@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FiMenu, FiX, FiChevronRight } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
+import NavbarSearch from "./NavbarSearch";
 
 const CategoryNavigation = () => {
   const [categories, setCategories] = useState([]);
@@ -144,12 +145,7 @@ const CategoryNavigation = () => {
               </div>
             ))}
             <div className="">
-              <input
-                type="text"
-                className="bg-slate-100 border rounded p-1 px-2 focus:outline-none focus:ring-2 focus:ring-red-200"
-                placeholder="Search "
-                onFocus={() => navigate("/products-search")}
-              ></input>
+              <NavbarSearch />
             </div>
           </div>
         </div>

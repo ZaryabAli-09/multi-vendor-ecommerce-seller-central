@@ -30,11 +30,12 @@ const ProductList = () => {
           category: category || "",
           subcategory: subcategory || "",
           subsubcategory: subsubcategory || "",
-          sort: sortBy,
+          sort: sortBy, // this will now always be current
           page: pagination.page.toString(),
           limit: pagination.limit.toString(),
         });
 
+        console.log(params.toString());
         const response = await fetch(
           `http://localhost:5000/api/product/category?${params.toString()}`
         );
@@ -60,7 +61,7 @@ const ProductList = () => {
     };
 
     fetchProducts();
-  }, [category, subcategory, subsubcategory, sortBy, pagination.page]);
+  }, [category, subcategory, subsubcategory, sortBy, pagination.page]); // this part is key
 
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
@@ -97,8 +98,8 @@ const ProductList = () => {
                 >
                   <option value="recent">Most Recent</option>
                   <option value="popular">Most Popular</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
+                  <option value="price-low">Low to High</option>
+                  <option value="price-high">High to Low</option>
                 </select>
               </div>
             </div>
