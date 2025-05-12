@@ -263,7 +263,6 @@ const Profile = () => {
                 <CircularProgress className="absolute inset-0 m-auto" />
               )}
             </div>
-            {/* Logo */}
             <div
               className="w-40 h-40 absolute top-48 left-1/2 transform -translate-x-1/2 rounded-full bg-contain bg-center hover:opacity-60 cursor-pointer"
               style={{

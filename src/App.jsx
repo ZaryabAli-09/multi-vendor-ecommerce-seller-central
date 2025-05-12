@@ -14,6 +14,10 @@ import Product from "./pages/Dashboard/ProductManagement/Product";
 import AuthenticatedRoutes from "./components/RoutesWrappers/AuthenticatedRoutes";
 import DummyOrder from "./pages/DummyOrder";
 import ProductDetail from "./pages/Dashboard/ProductManagement/Product";
+import CategoryNavigation from "./categories/CategoryNavigation";
+import ProductList from "./categories/ProductList";
+import ProductSearch from "./categories/ProductSearch";
+import Pagination from "./categories/Pagination";
 
 const App = () => {
   return (
@@ -31,6 +35,13 @@ const App = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/create-dummy-order" element={<DummyOrder />} />
+        <Route path="/cc" element={<CategoryNavigation />} />
+        <Route
+          path="/products/:category/:subcategory?/:subsubcategory?"
+          element={<ProductList />}
+        />
+        <Route path="/products-search" element={<ProductSearch />} />
+        <Route path="/pagination" element={<Pagination />} />
 
         {/* Dashboard Routes  */}
         <Route element={<AuthenticatedRoutes />}>

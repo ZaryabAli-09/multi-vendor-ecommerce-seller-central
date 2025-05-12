@@ -105,7 +105,7 @@ const Sidebar = ({ activeTab }) => {
     <Box className="w-72 bg-stone-200 border-r border-stone-400 shadow-md text-black h-full p-4 flex flex-col">
       <div className="flex items-center gap-2 ml-2 mb-8 pt-2 ">
         <div className="!font-extrabold text-xl text-stone-800">
-          LOGO{" "}
+          {import.meta.env.VITE_PLATFORM_NAME}{" "}
           <span className="p-1 bg-stone-800 font-thin !text-lg text-white rounded  ">
             Seller Central
           </span>{" "}

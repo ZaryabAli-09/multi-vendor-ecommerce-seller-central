@@ -62,7 +62,7 @@ const Register = () => {
           <span>
             <AiFillAlipayCircle className="text-3xl text-blue-500" />
           </span>
-          <span>Logo</span>
+          <span> {import.meta.env.VITE_PLATFORM_NAME}</span>
         </div>
 
         <h1 className="text-2xl">Join Our Seller Central Today!</h1>
