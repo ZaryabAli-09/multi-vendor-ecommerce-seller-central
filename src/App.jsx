@@ -14,6 +14,8 @@ import DummyOrder from "./pages/DummyOrder";
 import ProductDetail from "./pages/Dashboard/ProductManagement/Product";
 import CategoryNavigation from "./categories/CategoryNavigation";
 import ProductList from "./categories/ProductList";
+import DummyChat from "./pages/Dashboard/Chat/DummyChat";
+import Sellers from "./pages/Dashboard/Chat/Sellers";
 
 const App = () => {
   return (
@@ -31,6 +33,9 @@ const App = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/create-dummy-order" element={<DummyOrder />} />
+        <Route path="/dummy-chat/:sellerId" element={<DummyChat />} />
+        <Route path="/sellers" element={<Sellers />} />
+
         <Route path="/cc" element={<CategoryNavigation />} />
         <Route
           path="/products/:category/:subcategory?/:subsubcategory?"
