@@ -121,36 +121,18 @@ const ChatInterface = ({ sellerId, buyer, onBack }) => {
     const isSender = msg.sender === sellerId;
 
     return (
-      <ListItem
+      <div
         key={msg._id}
-        className={`flex ${
-          isSender ? "justify-start" : "justify-end"
+        className={`flex w-full  ${
+          isSender ? "justify-end" : "justify-start"
         } px-0 mb-2`}
       >
         <Box
-          className={`max-w-xs md:max-w-md rounded-lg px-4 py-2 ${
+          className={`max-w-xs md:max-w-md rounded-lg  px-4 py-2 ${
             isSender
               ? "bg-blue-100 text-gray-900 mr-8"
               : "bg-green-500 text-white ml-8"
           }`}
-          sx={{
-            position: "relative",
-            wordBreak: "break-word",
-            "&:before": {
-              content: '""',
-              position: "absolute",
-              width: 0,
-              height: 0,
-              [isSender ? "left" : "right"]: "-8px",
-              top: "12px",
-              borderStyle: "solid",
-              borderWidth: "8px 12px 8px 0",
-              borderColor: isSender
-                ? "transparent #dbeafe transparent transparent"
-                : "transparent #22c55e transparent transparent",
-              transform: isSender ? "none" : "scaleX(-1)",
-            },
-          }}
         >
           <Typography variant="body1">{msg.message}</Typography>
           <Typography
@@ -162,7 +144,7 @@ const ChatInterface = ({ sellerId, buyer, onBack }) => {
             {format(new Date(msg.timestamp), "h:mm a")}
           </Typography>
         </Box>
-      </ListItem>
+      </div>
     );
   };
 
@@ -183,7 +165,7 @@ const ChatInterface = ({ sellerId, buyer, onBack }) => {
 
       {/* Chat Messages */}
       <Box
-        className="flex-1 p-4 overflow-y-auto bg-gray-50"
+        className="flex-1 p-4 overflow-y-auto w-full  bg-gray-50"
         style={{ height: "calc(100vh - 160px)" }}
       >
         {messages.length ? (
