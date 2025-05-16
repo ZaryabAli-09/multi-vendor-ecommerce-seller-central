@@ -19,9 +19,11 @@ const BuyerChat = () => {
 
   const buyerId = "6769bf283ce5c7b6ff4b72c9";
 
+  console.log(conversations);
   useEffect(() => {
     socket.current = io("http://localhost:5000", {
       withCredentials: true,
+
       transports: ["websocket"],
     });
 
@@ -177,7 +179,6 @@ const BuyerChat = () => {
     _id: sellerId,
     name: sellerInfo?.brandName || "New Seller",
   };
-  console.log(sellerInfo);
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -222,9 +223,19 @@ const BuyerChat = () => {
               }}
               className="p-3 border-b hover:bg-gray-50 cursor-pointer flex items-center"
             >
-              <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center mr-3">
-                {conv.name.charAt(0)}
-              </div>
+              {/* chnages........................................... */}
+              {conv.logo.url ? (
+                <img
+                  src={conv.logo.url}
+                  alt={conv.name}
+                  className="w-10 h-10 rounded-full mr-3"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center mr-3">
+                  {conv.name.charAt(0)}
+                </div>
+              )}
+              {/* .........................................................  */}
               <div className="flex-1">
                 <h3 className="font-medium">{conv.name}</h3>
                 <p className="text-sm text-gray-500 truncate">
@@ -254,12 +265,21 @@ const BuyerChat = () => {
               >
                 ←
               </button>
-              <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center mr-2">
-                {currentConversation.name.charAt(0)}
-              </div>
+              {/* chnages...............................  */}
+              {currentConversation.logo.url ? (
+                <img
+                  src={currentConversation.logo.url}
+                  alt={currentConversation.name}
+                  className="w-10 h-10 rounded-full mr-3"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center mr-3">
+                  {currentConversation.name.charAt(0)}
+                </div>
+              )}
               <h3 className="font-medium">{currentConversation.name}</h3>
             </div>
-
+            {/* ..................................................  */}
             <div className="flex-1 p-4 overflow-y-auto bg-gray-100">
               {messages.map((message) => (
                 <div
