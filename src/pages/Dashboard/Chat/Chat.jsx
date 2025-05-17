@@ -36,7 +36,6 @@ const Chat = () => {
 
   return (
     <Box className="flex h-screen bg-gray-50">
-      {/* Conversation List - Always visible on desktop, conditionally on mobile */}
       <Box
         className={`w-full md:w-1/3 lg:w-1/4 bg-white border-r border-gray-200 ${
           selectedBuyer ? "hidden md:block" : "block"
