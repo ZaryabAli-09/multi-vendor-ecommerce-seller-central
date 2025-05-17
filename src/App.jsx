@@ -37,7 +37,8 @@ const App = () => {
 
         <Route path="/payment-success" element={<SuccessPage />} />
 
-        <Route path="/dummy-chat/:sellerId" element={<DummyChat />} />
+        <Route path="/my-messages/:sellerId?" element={<DummyChat />} />
+
         <Route path="/sellers" element={<Sellers />} />
 
         <Route path="/cc" element={<CategoryNavigation />} />
