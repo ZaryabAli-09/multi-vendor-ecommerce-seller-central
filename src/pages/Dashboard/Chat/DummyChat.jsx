@@ -395,8 +395,8 @@ const MyMessages = () => {
   const messagesEndRef = useRef(null);
   const socket = useRef();
 
-  const buyerId = useSelector((state) => state.user.id);
-  // const buyerId = "6769bf283ce5c7b6ff4b72c9";
+  // const buyerId = useSelector((state) => state.user.id);
+  const buyerId = "6769bf283ce5c7b6ff4b72c9";
 
   // Handle conversation selection
   const handleSelectConversation = (convId) => {
