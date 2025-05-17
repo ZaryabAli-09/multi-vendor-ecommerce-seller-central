@@ -178,7 +178,9 @@ const ChatInterface = ({ sellerId, buyer, onBack }) => {
       >
         {messages.length ? (
           <List>
-            {messages.map(renderMessage)}
+            {messages
+              .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)) // Sort by timestamp
+              .map(renderMessage)}
             <div ref={messagesEndRef} />
           </List>
         ) : (
