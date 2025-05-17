@@ -143,6 +143,14 @@ const ChatInterface = ({ sellerId, buyer, onBack }) => {
           >
             {format(new Date(msg.timestamp), "h:mm a")}
           </Typography>
+          <Typography
+            variant="caption"
+            className={`block text-right mt-1 text-xs ${
+              isSender ? "text-black" : "text-green-100"
+            }`}
+          >
+            {format(new Date(msg.timestamp), "MM/dd/yy")}
+          </Typography>
         </Box>
       </div>
     );

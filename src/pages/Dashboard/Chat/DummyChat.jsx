@@ -305,6 +305,15 @@ const BuyerChat = () => {
                     >
                       {format(new Date(message.timestamp), "h:mm a")}
                     </p>
+                    <p
+                      className={`text-xs mt-1 ${
+                        message.sender === buyerId
+                          ? "text-blue-100"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {format(new Date(message.timestamp), "MM:dd yy")}
+                    </p>
                   </div>
                 </div>
               ))}
