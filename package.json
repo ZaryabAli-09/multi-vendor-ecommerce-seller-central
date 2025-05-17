@@ -17,6 +17,7 @@
     "@hookform/resolvers": "^3.10.0",
     "@mui/material": "^5.17.1",
     "@reduxjs/toolkit": "^2.5.0",
+    "@stripe/stripe-js": "^7.3.0",
     "date-fns": "^4.1.0",
     "lodash": "^4.17.21",
     "rc-slider": "^11.1.8",

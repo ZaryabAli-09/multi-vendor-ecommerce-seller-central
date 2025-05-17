@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import {
   Button,
   Paper,
@@ -14,26 +15,35 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
+
+import { loadStripe } from "@stripe/stripe-js";
 
 const DummyOrder = ({ buyerId = "6769bf283ce5c7b6ff4b72c9" }) => {
   const [products, setProducts] = useState([]); // All products fetched from the backend
   const [cart, setCart] = useState([]); // Products added to the cart
   const [selectedSeller, setSelectedSeller] = useState(null); // Selected seller for checkout
   const [loading, setLoading] = useState(true); // Loading state for fetching products
+  const [paymentMethod, setPaymentMethod] = useState(""); // Default payment method
 
+  function handleChangePaymentMethod(event) {
+    setPaymentMethod(event.target.value);
+  }
   // Fetch all products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/product/all`
+          `${import.meta.env.VITE_API_URL}/product/all-filter-pagination`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }
         const data = await response.json();
-        setProducts(data.data);
+        setProducts(data.data.data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -43,6 +53,7 @@ const DummyOrder = ({ buyerId = "6769bf283ce5c7b6ff4b72c9" }) => {
     fetchProducts();
   }, []);
 
+  console.log(products);
   // Add a product variant to the cart
   const addToCart = (product, variant, quantity) => {
     const existingItem = cart.find(
@@ -123,51 +134,102 @@ const DummyOrder = ({ buyerId = "6769bf283ce5c7b6ff4b72c9" }) => {
       alert("Please select a seller to proceed with the order.");
       return;
     }
-
+    if (!paymentMethod || paymentMethod === "") {
+      alert("Please select a payment method to proceed with the order.");
+      return;
+    }
     const orderItems = cartBySeller[selectedSeller].items.map((item) => ({
       product: item.product._id,
       variantId: item.variant._id,
       quantity: item.quantity,
     }));
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/order/new`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            buyerId,
-            orderItems,
-            totalAmount,
-            paymentMethod: "cash on delivery", // Default payment method for testing
-            shippingAddress: {
-              street: "123 Main St",
-              city: "New York",
-              state: "NY",
-              postalCode: "10001",
-              country: "USA",
+    if (paymentMethod === "cash on delivery") {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/order/new`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
             },
-          }),
+
+            body: JSON.stringify({
+              buyerId,
+              orderItems,
+              totalAmount,
+              paymentMethod: "cash on delivery", // Default payment method for testing
+              shippingAddress: {
+                street: "123 Main St",
+                city: "New York",
+                state: "NY",
+                country: "USA",
+              },
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to create order");
         }
-      );
 
-      if (!response.ok) {
-        throw new Error("Failed to create order");
+        const data = await response.json();
+        alert("Order created successfully!");
+        console.log("Order created:", data);
+      } catch (error) {
+        console.error("Error creating order:", error);
+        alert("Failed to create order.");
       }
+    }
 
-      const data = await response.json();
-      alert("Order created successfully!");
-      console.log("Order created:", data);
-    } catch (error) {
-      console.error("Error creating order:", error);
-      alert("Failed to create order.");
+    // stripe checkout
+    else if (paymentMethod === "card") {
+      try {
+        const stripe = await loadStripe(
+          "pk_test_51RPVnSGaJuPBuYoQVO2jcPE9pxicogaLCOJ6K9VEQD8Txbi089t0YVAhxPd8NlVmRf7DKlK8NJAUeKOEpG9fgjhq001mZN1Omz"
+        );
+
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/order/checkout-session`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+              buyerId,
+              orderItems,
+              totalAmount,
+              paymentMethod: "card",
+              shippingAddress: {
+                country: "Pakistan",
+                state: "Punjab",
+                city: "Lahore",
+                street: "123 Main St",
+              },
+            }),
+          }
+        );
+
+        const session = await response.json();
+
+        if (!response.ok) {
+          throw new Error(session.message);
+        }
+
+        console.log(session);
+        const result = stripe.redirectToCheckout({
+          sessionId: session.sessionId,
+        });
+
+        if (result.error) {
+          toast.error(result.error.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
   };
-
   if (loading) {
     return <Typography>Loading products...</Typography>;
   }
@@ -308,14 +370,31 @@ const DummyOrder = ({ buyerId = "6769bf283ce5c7b6ff4b72c9" }) => {
           <Typography sx={{ mt: 2 }}>
             Total Amount: ${totalAmount.toFixed(2)}
           </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOrderNow}
-            sx={{ mt: 2 }}
-          >
-            Order Now
-          </Button>
+
+          <div className="flex flex-col gap-2">
+            <InputLabel id="demo-simple-select-label">
+              Payment Method{" "}
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={paymentMethod}
+              label="Payment Method"
+              onChange={handleChangePaymentMethod}
+            >
+              <MenuItem value="cash on delivery">cash on delivery</MenuItem>
+              <MenuItem value="card">card</MenuItem>
+            </Select>
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleOrderNow}
+              sx={{ mt: 2 }}
+            >
+              Order Now
+            </Button>
+          </div>
         </Paper>
       )}
     </Box>

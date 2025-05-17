@@ -16,6 +16,7 @@ import CategoryNavigation from "./categories/CategoryNavigation";
 import ProductList from "./categories/ProductList";
 import DummyChat from "./pages/Dashboard/Chat/DummyChat";
 import Sellers from "./pages/Dashboard/Chat/Sellers";
+import SuccessPage from "./pages/DummyOrderSuccess";
 
 const App = () => {
   return (
@@ -33,6 +34,9 @@ const App = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/create-dummy-order" element={<DummyOrder />} />
+
+        <Route path="/payment-success" element={<SuccessPage />} />
+
         <Route path="/dummy-chat/:sellerId" element={<DummyChat />} />
         <Route path="/sellers" element={<Sellers />} />
 
