@@ -11,6 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../store/authReducers";
+import { HiOutlineMail } from "react-icons/hi";
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -36,19 +37,19 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="border-b border-stone-400 w-full px-6 py-3 flex justify-between items-center ">
+    <nav className="bg-white border-b border-gray-200 px-4 py-2 flex justify-between items-center sticky top-0 z-50">
       {/* User Email */}
 
-      <div className="flex items-center justify-center gap-2 bg-black animate-pulse p-1 rounded-lg">
-        <p className="text-white font-semibold text-xs">Welcome</p>
-        {/* <AiOutlineMail className="text-white" />{" "} */}
-        <p variant="subtitle1" className="text-white font-semibold text-xs ">
-          {userEmail}
-        </p>
+      <div className="flex items-center gap-2 text-sm text-gray-600">
+        <p className="font-semibold text-xs">Welcome, </p>
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <HiOutlineMail className="text-gray-500" />
+          <span>{userEmail || "Seller"}</span>
+        </div>
       </div>
 
       {/* Profile Section */}
-      <div className="flex items-center">
+      <div className="flex items-center  rounded-full border border-gray-300 ">
         {/* Profile Icon Button */}
         <IconButton
           onClick={handleMenuOpen}

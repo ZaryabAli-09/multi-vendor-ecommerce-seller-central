@@ -126,9 +126,7 @@ const SellerDashboard = () => {
 
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
-        Seller Dashboard
-      </Typography>
+      <h2 className="text-xl md:text-4xl mb-10"> Seller Dashboard Overview</h2>
 
       {/* Enhanced Top Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -188,7 +186,8 @@ const SellerDashboard = () => {
               >
                 <Box
                   sx={{
-                    backgroundColor: "rgba(255,255,255,0.2)",
+                    backgroundColor: "rgba(255,255,255,0.1)",
+                    color: "white",
                     borderRadius: "50%",
                     width: 48,
                     height: 48,
@@ -250,7 +249,7 @@ const SellerDashboard = () => {
               <Bar
                 dataKey="sales"
                 name="Monthly Sales"
-                fill="#8884d8"
+                fill="#178896"
                 radius={[4, 4, 0, 0]}
               />
               <Line
@@ -299,7 +298,7 @@ const SellerDashboard = () => {
               <Bar
                 dataKey="sold"
                 name="Sold"
-                fill="#82ca9d"
+                fill="#22ca9d"
                 radius={[0, 4, 4, 0]}
               />
               <Bar
@@ -441,10 +440,10 @@ const SellerDashboard = () => {
                     key={`cell-${index}`}
                     fill={
                       [
-                        "#4CAF50", // Delivered - green
-                        "#2196F3", // Shipped - blue
-                        "#FFC107", // Pending - amber
-                        "#FF0000", // Other statuses - gray
+                        "#66bb6a", // Delivered - muted green
+                        "#42a5f5", // Shipped - muted blue
+                        "#ffb74d", // Pending - muted amber
+                        "#ef5350", // Other - muted red
                       ][index % 4]
                     }
                   />
