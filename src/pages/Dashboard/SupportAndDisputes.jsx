@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import CircularProgress from "@mui/material/CircularProgress";
 
 const SupportAndDisputes = () => {
   const [subject, setSubject] = useState("");
@@ -18,14 +17,14 @@ const SupportAndDisputes = () => {
       setLoading(true);
 
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/support&disputes/seller/create`,
+        `${import.meta.env.VITE_API_URL}/support&disputes/seller/create`, // change to /seller to /buyer
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify({ subject, message, fromType: "Seller" }), // or Seller
+          body: JSON.stringify({ subject, message, fromType: "Seller" }), // change to Buyer
         }
       );
 
@@ -91,11 +90,7 @@ const SupportAndDisputes = () => {
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg flex justify-center items-center transition"
             disabled={loading}
           >
-            {loading ? (
-              <CircularProgress size={24} style={{ color: "white" }} />
-            ) : (
-              "Submit Request"
-            )}
+            {loading ? <div>Loading...</div> : "Submit Request"}
           </button>
         </form>
       </div>
