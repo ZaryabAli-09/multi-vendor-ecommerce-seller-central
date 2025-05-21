@@ -370,25 +370,24 @@ const CreateProduct = () => {
                   </div>
                 )}{" "}
             </div>
-            <div className="p-4 shadow-md rounded-lg border h-32 my-2 mb-4 md:w-[40%]  bg-purple-500 text-secondary  ">
+            <div className="p-4 shadow-md rounded-lg border h-32 my-2 mb-4 md:w-[40%]  bg-blue-500 text-secondary  ">
               <h3 className="font-bold">* {""}Tips</h3>
               <p className="text-xs">
-                Please make sure to upload product images(s), fill product name,
-                and select the correct category to publish a product.
+                Please make sure to upload genuine product images, fill product
+                name, and select the correct categories.
               </p>
             </div>
           </div>
           {/* Product Description */}
           <div className="mb-4">
-            <div className="p-4 shadow-md rounded-lg border my-2 mb-4   bg-purple-500 text-secondary  ">
+            <div className="p-4 shadow-md rounded-lg border my-2 mb-4   bg-blue-500 text-secondary  ">
               <h3 className="font-bold">* {""}Tips</h3>
               <p className=" text-[9px] md:text-xs">
-                When uploading accessories like jewelry and watches, provide a
-                detailed description including material (gold-plated, stainless
-                steel, leather, etc.), dimensions (chain length, dial size,
-                strap width), weight, and any special features like water
-                resistance, adjustable sizing, or gemstone details in
-                description.
+                Provide a clear and concise title, highlight key features like
+                size, color, and material, and mention any warranty or return
+                policies. Use proper grammar, avoid all caps, and try using
+                short sentences or bullet-style formatting to make the
+                description easy to read and informative.
               </p>
             </div>
             <TextField
@@ -403,19 +402,19 @@ const CreateProduct = () => {
               rows={4}
             />
           </div>
-          <div className="p-4 shadow-md rounded-lg border  my-2 mb-4   bg-purple-500 text-secondary ">
+          <div className="p-4 shadow-md rounded-lg border  my-2 mb-4   bg-blue-500 text-secondary ">
             <h3 className="font-bold">* {""}Tips</h3>
             <p className="text-[9px] md:text-xs">
-              For variant-based products like shoes and clothing, ensure that
-              each product has at least one variant with details like size,
-              color, price, and stock availability. If a product comes in the
-              same color but different sizes, upload images only in one variant
-              to avoid duplication. However, if you have different images for
-              each size, you can upload them separately for better clarity.
-              Always mention fabric type, fit, stretchability, and washing
-              instructions in the description. Providing a size chart and clear
-              images from multiple angles will help customers make informed
-              decisions.
+              When uploading a product, at least one variant is required even if
+              the product doesn’t have multiple options. Selecting different
+              sizes and colors, our system will automatically generate all
+              possible variant combinations. For example, if a T-shirt is
+              available in two colors (Black and White) and two sizes (Small and
+              Medium), the system will create 4 variants: Black-S, Black-M,
+              White-S, and White-M. For each color variant, upload images is
+              must, set price, add any discount, and provide stock information.
+              This helps ensure every product variant is well represented and
+              easily managed.
             </p>
           </div>
 
@@ -571,6 +570,7 @@ const CreateProduct = () => {
               variant="contained"
               color="secondary"
               type="submit"
+              sx={{ paddingBlock: "15px", fontSize: "16px" }}
               fullWidth
               disabled={loading}
             >
@@ -584,6 +584,7 @@ const CreateProduct = () => {
               variant="outlined"
               color="error"
               fullWidth
+              sx={{ paddingBlock: "15px", fontSize: "16px" }}
               onClick={resetForm}
             >
               Reset

@@ -22,7 +22,7 @@ import {
 
 import { loadStripe } from "@stripe/stripe-js";
 
-const DummyOrder = ({ buyerId = "6769bf283ce5c7b6ff4b72c9" }) => {
+const DummyOrder = ({ buyerId = "681cda70ed3bb44a4ba7d000" }) => {
   const [products, setProducts] = useState([]); // All products fetched from the backend
   const [cart, setCart] = useState([]); // Products added to the cart
   const [selectedSeller, setSelectedSeller] = useState(null); // Selected seller for checkout

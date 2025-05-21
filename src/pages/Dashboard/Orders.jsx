@@ -273,7 +273,7 @@ const Orders = () => {
                   <TableCell>{order._id}</TableCell>
                   <TableCell>{order.orderBy?.name}</TableCell>
                   <TableCell>{order.orderBy?.email}</TableCell>
-                  <TableCell>${order.totalAmount}</TableCell>
+                  <TableCell>Rs. {order.totalAmount}</TableCell>
                   <TableCell>
                     <Select
                       value={order.status}

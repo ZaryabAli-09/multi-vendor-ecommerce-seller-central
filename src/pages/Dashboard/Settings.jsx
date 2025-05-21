@@ -12,6 +12,8 @@ import {
   Box,
   CircularProgress,
 } from "@mui/material";
+import { MdOutlineSettings } from "react-icons/md";
+import { HiOutlineLockClosed } from "react-icons/hi";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
 
@@ -67,21 +69,33 @@ export default function Settings() {
   };
 
   return (
-    <Box className="max-w-3xl mt-32 mx-auto p-6 bg-secondary rounded-md shadow-md">
-      <h2 className="text-xl md:text-2xl text-center mb-6 font-bold text-dark">
-        Account Settings{" "}
-      </h2>
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-sm border border-gray-200">
+      {/* Header */}
+      <div className="flex flex-col items-center mb-8">
+        <MdOutlineSettings className="text-3xl text-gray-800 mb-2" />
+        <h2 className="text-2xl font-bold text-gray-800">Account Settings</h2>
+        <p className="text-gray-500 text-sm mt-1">
+          Manage your account credentials
+        </p>
+      </div>
 
-      <div className="flex items-center border space-x-1 border-gray-100 w-fit rounded-md p-4">
-        <span className="text-3xl relative -top-2">......</span>
+      {/* Password Update Card */}
+      <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-green-100 rounded-full">
+            <HiOutlineLockClosed className="text-green-600 text-xl" />
+          </div>
+          <div>
+            <h3 className="font-medium text-gray-800">Password</h3>
+            <p className="text-sm text-gray-500">••••••••</p>
+          </div>
+        </div>
         <Button
-          className="w-fit text-3xl"
-          variant="text"
-          color="warning"
-          size="small"
+          variant="outlined"
           onClick={() => setOpen(true)}
+          className="border-gray-300 text-gray-700 hover:bg-gray-100 normal-case"
         >
-          Modify Password
+          Change
         </Button>
       </div>
 
@@ -119,6 +133,6 @@ export default function Settings() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </div>
   );
 }

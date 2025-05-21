@@ -378,6 +378,7 @@ const ProductEditModal = ({
                   label="Price"
                   type="number"
                   value={variant.price}
+                  disabled
                   onChange={(e) => handleChange(index, "price", e.target.value)}
                   fullWidth
                 />
