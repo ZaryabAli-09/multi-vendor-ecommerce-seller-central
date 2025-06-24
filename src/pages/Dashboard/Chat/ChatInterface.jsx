@@ -21,7 +21,7 @@ const ChatInterface = ({ sellerId, buyer, onBack }) => {
   const messagesRef = useRef([]);
 
   useEffect(() => {
-    socket.current = io(import.meta.env.VITE_SOCKET_URL, {
+    socket.current = io("https://ecom-backend-5l3d.onrender.com", {
       withCredentials: true,
       transports: ["websocket"],
     });
@@ -37,9 +37,7 @@ const ChatInterface = ({ sellerId, buyer, onBack }) => {
     const fetchMessages = async () => {
       try {
         const res = await fetch(
-          `${
-            import.meta.env.VITE_API_URL
-          }/chat/messages?senderId=${sellerId}&receiverId=${buyer._id}`,
+          `https://ecom-backend-5l3d.onrender.com/api/chat/messages?senderId=${sellerId}&receiverId=${buyer._id}`,
           { credentials: "include" }
         );
         const result = await res.json();

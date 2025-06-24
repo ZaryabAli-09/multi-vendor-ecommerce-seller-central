@@ -15,7 +15,7 @@ const Chat = () => {
   const fetchConversations = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/chat/conversations?userId=${sellerId}`,
+        `https://ecom-backend-5l3d.onrender.com/api/chat/conversations?userId=${sellerId}`,
         { credentials: "include" }
       );
       const data = await response.json();
