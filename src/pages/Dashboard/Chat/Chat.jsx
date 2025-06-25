@@ -10,9 +10,11 @@ const Chat = () => {
   const sellerId = user?._id;
   const [selectedBuyer, setSelectedBuyer] = useState(null);
   const [conversations, setConversations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Fetch conversations for the seller
   const fetchConversations = async () => {
+    setLoading(true);
     try {
       const response = await fetch(
         `https://ecom-backend-5l3d.onrender.com/api/chat/conversations?userId=${sellerId}`,
@@ -24,15 +26,28 @@ const Chat = () => {
         throw new Error(data.message || "Failed to fetch conversations");
       console.log(data);
       setConversations(Array.isArray(data) ? data : []);
+      setLoading(false);
     } catch (error) {
       toast.error(error.message);
       setConversations([]);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     if (sellerId) fetchConversations();
   }, [sellerId]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-white">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-lg font-medium text-gray-700">
+          Loading conversation...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <Box className="flex h-screen bg-gray-50">
