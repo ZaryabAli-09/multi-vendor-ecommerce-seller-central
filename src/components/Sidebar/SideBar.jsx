@@ -69,6 +69,11 @@ const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
     icon: <HiOutlineChat size={20} />,
   },
   {
+    label: "Upload Reel",
+    path: "/dashboard?tab=upload-reels",
+    icon: <HiOutlineCreditCard size={20} />,
+  },
+  {
     label: "Settings",
     path: "/dashboard?tab=settings",
     icon: <HiOutlineCog size={20} />,

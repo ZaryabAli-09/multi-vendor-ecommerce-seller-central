@@ -12,6 +12,7 @@ import Settings from "./Settings";
 import Reviews from "./ReviewsManagement/Reviews";
 import Chat from "./Chat/Chat";
 import SupportAndDisputes from "./SupportAndDisputes";
+import UploadReel from "./UploadReels";
 
 const DashboardHome = () => {
   const location = useLocation();
@@ -50,6 +51,8 @@ const DashboardHome = () => {
           {tab === "reviews" && <Reviews />}
           {tab === "settings" && <Settings />}
           {tab === "chat" && <Chat />}
+          {tab === "upload-reels" && <UploadReel />}
+
           {tab === "billing" && <Billing />}
           {tab === "support" && <SupportAndDisputes />}
         </div>

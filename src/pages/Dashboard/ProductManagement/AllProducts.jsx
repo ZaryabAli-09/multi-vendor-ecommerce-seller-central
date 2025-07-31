@@ -213,6 +213,8 @@ const AllProducts = () => {
               <TableCell>#</TableCell>
               <TableCell>Image</TableCell>
               <TableCell>Name</TableCell>
+              <TableCell>ID</TableCell>
+
               <TableCell>Stock</TableCell>
               <TableCell>Categories</TableCell>
               <TableCell>Price</TableCell>
@@ -230,6 +232,9 @@ const AllProducts = () => {
                   </TableCell>
                   <TableCell>
                     <Skeleton variant="rectangular" width={48} height={48} />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" />
                   </TableCell>
                   <TableCell>
                     <Skeleton variant="text" />
@@ -275,6 +280,18 @@ const AllProducts = () => {
                     >
                       {product.name}
                     </Link>
+                  </TableCell>
+                  <TableCell>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(product._id);
+                        toast.success("Product ID copied to clipboard");
+                      }}
+                      title="Copy ID"
+                      className="text-gray-500 hover:text-black text-sm"
+                    >
+                      📋Copy
+                    </button>
                   </TableCell>
                   <TableCell>{product.countInStock}</TableCell>
                   <TableCell>
