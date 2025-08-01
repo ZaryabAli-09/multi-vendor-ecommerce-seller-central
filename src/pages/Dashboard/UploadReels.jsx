@@ -1,13 +1,36 @@
 import React, { useState, useEffect, useRef } from "react";
-
+import { toast } from "react-hot-toast";
 const UploadReel = () => {
   const [video, setVideo] = useState(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [reels, setReels] = useState([]);
   const [link, setLink] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [visibleCount, setVisibleCount] = useState(4); // Number of reels initially shown
   const observer = useRef();
+
+  const handleDelete = async (reelId) => {
+    if (!confirm("Are you sure you want to delete this reel?")) return;
+    try {
+      setDeleteLoading(true);
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/product/reels/${reelId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to delete reel");
+      setDeleteLoading(false);
+      toast.success(data.message);
+      setReels((prev) => prev.filter((r) => r._id !== reelId));
+    } catch (err) {
+      setDeleteLoading(false);
+      toast.error(err.message);
+    }
+  };
 
   const fetchReels = async () => {
     try {
@@ -28,15 +51,25 @@ const UploadReel = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!video) return;
 
-    const formData = new FormData();
-    formData.append("video", video);
-    formData.append("caption", link);
+    // validation checks
+    if (!video) return;
     if (!link) {
       setMessage("Please enter a product ID to link reel with product.");
       return;
     }
+    link.trim();
+    const isValidObjectId = /^[a-f\d]{24}$/i.test(link);
+    if (!isValidObjectId) {
+      setMessage("Invalid Product ID format. Please enter a valid ObjectId.");
+      return;
+    }
+
+    // formdata appending
+    const formData = new FormData();
+    formData.append("video", video);
+    formData.append("caption", link);
+
     setLoading(true);
     setMessage("");
 
@@ -53,6 +86,7 @@ const UploadReel = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Upload failed");
       setMessage(data.message);
+      toast.success(data.message);
       setVideo(null);
       fetchReels(); // Refresh reels list
     } catch (err) {
@@ -78,7 +112,9 @@ const UploadReel = () => {
       observer.current.observe(lastReelRef.current);
     }
   }, [reels, visibleCount]);
-
+  {
+    deleteLoading ? toast.loading("Deleting reel...") : toast.dismiss();
+  }
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
@@ -108,12 +144,16 @@ const UploadReel = () => {
         </div>
         <button
           type="submit"
-          className={`w-full bg-blue-600 text-white py-2 px-4 rounded transition ${
+          className={`w-full bg-blue-600 text-white py-2 px-4 text-center rounded transition ${
             loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
           }`}
           disabled={loading}
         >
-          {loading ? "Uploading..." : "Upload"}
+          {loading ? (
+            <div className="animate-spin text-center rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+          ) : (
+            "Upload"
+          )}{" "}
         </button>
 
         {message && (
@@ -137,7 +177,7 @@ const UploadReel = () => {
         {reels.slice(0, visibleCount).map((reel, idx) => (
           <div
             key={reel._id}
-            className="rounded shadow bg-white overflow-hidden"
+            className="relative rounded shadow bg-white overflow-hidden group"
             ref={idx === visibleCount - 1 ? lastReelRef : null}
           >
             <video
@@ -145,6 +185,12 @@ const UploadReel = () => {
               controls
               className="w-full h-64 object-cover"
             />
+            <button
+              onClick={() => handleDelete(reel._id)}
+              className="absolute top-2 right-2 bg-red-600 text-white p-1 px-3 text-sm rounded hidden group-hover:block"
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>
