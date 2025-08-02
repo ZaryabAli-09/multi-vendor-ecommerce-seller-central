@@ -83,7 +83,7 @@ const SellerDashboard = () => {
     };
     fetchData();
   }, []);
-
+  console.log(data);
   if (loading)
     return (
       <Box
@@ -398,6 +398,137 @@ const SellerDashboard = () => {
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Reels Overview */}
+      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
+        Reels Overview
+      </Typography>
+      <Paper sx={{ p: 2, mb: 4, borderRadius: 3, boxShadow: 3 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={4}>
+            <Paper
+              sx={{
+                p: 2,
+                background: cardColors[0],
+                color: "white",
+                borderRadius: 2,
+                boxShadow: 1,
+              }}
+            >
+              <Typography variant="subtitle1">Total Reels</Typography>
+              <Typography variant="h5" fontWeight="bold">
+                {data.totalReels}
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <Paper
+              sx={{
+                p: 2,
+                background: cardColors[1],
+                color: "white",
+                borderRadius: 2,
+                boxShadow: 1,
+              }}
+            >
+              <Typography variant="subtitle1">Total Likes on Reels</Typography>
+              <Typography variant="h5" fontWeight="bold">
+                {data.totalReelLikes}
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+
+        {/* Top Reels with Thumbnails and Chart */}
+        <Box mt={4}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Top Reels by Likes
+          </Typography>
+
+          {data.topReels && data.topReels.length > 0 ? (
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                {/* Bar Chart with Reel Captions */}
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart
+                    data={data.topReels.map((reel) => ({
+                      name:
+                        reel.caption.length > 20
+                          ? reel.caption.slice(0, 20) + "..."
+                          : reel.caption,
+                      likes: reel.likes,
+                    }))}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="name"
+                      interval={0}
+                      angle={-20}
+                      textAnchor="end"
+                    />
+                    <YAxis allowDecimals={false} />
+                    <Tooltip />
+                    <Bar dataKey="likes" fill="#1976d2" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                {/* Reel Thumbnails and Captions */}
+                <Grid container spacing={2}>
+                  {data.topReels.map((reel, index) => (
+                    <Grid item xs={12} key={index}>
+                      <Paper
+                        elevation={1}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          p: 1,
+                          borderRadius: 2,
+                          background: "#f5f5f5",
+                        }}
+                      >
+                        <video
+                          src={reel.videoUrl}
+                          width="90"
+                          height="90"
+                          controls
+                          muted
+                          style={{
+                            borderRadius: 8,
+                            objectFit: "cover",
+                            marginRight: 12,
+                          }}
+                        />
+                        <Box>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{
+                              fontWeight: 500,
+                              color: "#333",
+                              maxWidth: "230px",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {reel.caption || "Untitled Reel"}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            👍 {reel.likes} likes
+                          </Typography>
+                        </Box>
+                      </Paper>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+            </Grid>
+          ) : (
+            renderNoDataMessage("No top reels data available!")
+          )}
+        </Box>
+      </Paper>
 
       {/* Enhanced Order Status */}
       <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
