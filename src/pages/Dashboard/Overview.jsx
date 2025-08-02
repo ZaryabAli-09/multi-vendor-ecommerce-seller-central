@@ -486,7 +486,7 @@ const SellerDashboard = () => {
                 >
                   {data.topReels.map((reel, index) => (
                     <Paper
-                      key={index}
+                      key={reel._id}
                       elevation={2}
                       sx={{
                         minWidth: 140,
