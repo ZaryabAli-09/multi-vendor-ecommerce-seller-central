@@ -7,7 +7,7 @@ const UploadReel = () => {
   const [reels, setReels] = useState([]);
   const [link, setLink] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(4); // Number of reels initially shown
+  const [visibleCount, setVisibleCount] = useState(3); // Number of reels initially shown
   const observer = useRef();
 
   const handleDelete = async (reelId) => {
@@ -35,13 +35,16 @@ const UploadReel = () => {
   const fetchReels = async () => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/product/reels/get`
+        `${import.meta.env.VITE_API_URL}/product/seller/reels`,
+        {
+          credentials: "include",
+        }
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to load reels");
+      if (!res.ok) throw new Error(data.message || "Failed to load reels");
       setReels(data.data);
     } catch (err) {
-      setMessage(err.message);
+      toast.error(err.message);
     }
   };
 
