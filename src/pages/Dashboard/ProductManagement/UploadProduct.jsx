@@ -253,10 +253,6 @@ const CreateProduct = () => {
       });
     });
 
-    for (let pair of payload.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-
     try {
       setLoading(true);
 

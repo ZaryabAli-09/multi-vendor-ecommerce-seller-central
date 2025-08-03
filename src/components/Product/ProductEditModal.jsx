@@ -183,7 +183,6 @@ const ProductEditModal = ({
         ],
         editingProductId,
       };
-      console.log(payload);
       setLoading(true);
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/product/update/${editingProductId}`,

@@ -60,7 +60,6 @@ const Reviews = () => {
         }?${queryParams}`
       );
       const result = await res.json();
-      console.log(result);
       if (!res.ok) {
         toast.error(result.message);
       } else {

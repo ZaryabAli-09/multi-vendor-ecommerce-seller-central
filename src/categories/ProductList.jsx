@@ -35,7 +35,6 @@ const ProductList = () => {
           limit: pagination.limit.toString(),
         });
 
-        console.log(params.toString());
         const response = await fetch(
           `http://localhost:5000/api/product/category?${params.toString()}`
         );

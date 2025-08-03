@@ -119,7 +119,6 @@
 //           `http://localhost:5000/api/seller/single/${sellerId}`
 //         );
 //         const data = await response.json();
-//         console.log(data);
 //         if (response.ok) setSellerInfo(data.data);
 //       } catch (error) {
 //         toast.error("Failed to fetch seller info");
@@ -484,7 +483,6 @@ const MyMessages = () => {
         }
       } catch (error) {
         toast.error(error.message);
-        console.log(error);
       } finally {
         setLoading(false);
       }

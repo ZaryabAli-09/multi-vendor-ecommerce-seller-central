@@ -53,7 +53,6 @@ const DummyOrder = ({ buyerId = "681cda70ed3bb44a4ba7d000" }) => {
     fetchProducts();
   }, []);
 
-  console.log(products);
   // Add a product variant to the cart
   const addToCart = (product, variant, quantity) => {
     const existingItem = cart.find(
@@ -174,7 +173,6 @@ const DummyOrder = ({ buyerId = "681cda70ed3bb44a4ba7d000" }) => {
 
         const data = await response.json();
         alert("Order created successfully!");
-        console.log("Order created:", data);
       } catch (error) {
         console.error("Error creating order:", error);
         alert("Failed to create order.");
@@ -217,7 +215,6 @@ const DummyOrder = ({ buyerId = "681cda70ed3bb44a4ba7d000" }) => {
           throw new Error(session.message);
         }
 
-        console.log(session);
         const result = stripe.redirectToCheckout({
           sessionId: session.sessionId,
         });

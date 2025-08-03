@@ -24,7 +24,6 @@ const Chat = () => {
 
       if (!response.ok)
         throw new Error(data.message || "Failed to fetch conversations");
-      console.log(data);
       setConversations(Array.isArray(data) ? data : []);
       setLoading(false);
     } catch (error) {

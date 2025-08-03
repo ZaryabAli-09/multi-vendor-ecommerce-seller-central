@@ -92,7 +92,6 @@ const GoogleLogin = () => {
       }
 
       toast.success("login successful", { id: loadingToast });
-      console.log("success dtaa", data);
 
       //   navigate("/dashboard"); // Uncomment this line to redirect after successful login
     } catch (error) {

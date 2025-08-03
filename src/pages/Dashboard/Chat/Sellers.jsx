@@ -23,8 +23,6 @@ const Sellers = () => {
     fetchSellers();
   }, []);
 
-  console.log(sellers);
-
   const handleSellerClick = (sellerId) => {
     navigate(`/dummy-chat/${sellerId}`);
   };

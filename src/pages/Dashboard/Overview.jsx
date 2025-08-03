@@ -83,7 +83,6 @@ const SellerDashboard = () => {
     };
     fetchData();
   }, []);
-  console.log(data);
   if (loading)
     return (
       <Box
